@@ -1,0 +1,649 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="es"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;⚽ Quiniela Mundial 2026&lt;/title&gt;</p>
+<p class="p1">&lt;link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--verde:#00C853; --verde-oscuro:#007B33; --oro:#FFD700;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--rojo:#E53935; --azul-noche:#0D1B2A; --azul-medio:#1A2F46;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--azul-claro:#243B55; --texto:#F0F4F8; --gris:#8899AA;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--card:rgba(255,255,255,0.05); --card-border:rgba(255,255,255,0.10);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*{margin:0;padding:0;box-sizing:border-box;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body{font-family:'Nunito',sans-serif;background:var(--azul-noche);color:var(--texto);min-height:100vh;overflow-x:hidden;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 20%,rgba(0,200,83,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 90% 80%,rgba(255,215,0,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>#loading-overlay{position:fixed;inset:0;background:var(--azul-noche);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.spinner{width:48px;height:48px;border:4px solid rgba(0,200,83,.2);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@keyframes spin{to{transform:rotate(360deg);}}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#loading-overlay p{color:var(--gris);font-size:.9rem;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>#sync-status{position:fixed;top:10px;right:12px;z-index:200;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:800;transition:all .3s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#sync-status.synced{background:rgba(0,200,83,.2);color:var(--verde);border:1px solid rgba(0,200,83,.3);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#sync-status.syncing{background:rgba(255,215,0,.2);color:var(--oro);border:1px solid rgba(255,215,0,.3);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#sync-status.error{background:rgba(229,57,53,.2);color:var(--rojo);border:1px solid rgba(229,57,53,.3);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>header{position:relative;z-index:10;text-align:center;padding:40px 20px 20px;border-bottom:1px solid var(--card-border);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.trophy{font-size:3rem;animation:bounce 2s infinite;display:inline-block;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,5rem);letter-spacing:4px;background:linear-gradient(135deg,#FFD700 0%,#00C853 60%,#FFD700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>header p{color:var(--gris);font-size:.9rem;margin-top:6px;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>#deadline-banner{margin:0;padding:10px 20px;text-align:center;font-size:.84rem;font-weight:800;position:relative;z-index:10;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#deadline-banner.open{background:rgba(0,200,83,.1);color:var(--verde);border-bottom:1px solid rgba(0,200,83,.2);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#deadline-banner.closed{background:rgba(229,57,53,.1);color:var(--rojo);border-bottom:1px solid rgba(229,57,53,.2);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#deadline-banner.none{display:none;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.tabs{position:sticky;top:0;z-index:100;display:flex;background:var(--azul-noche);border-bottom:2px solid var(--card-border);overflow-x:auto;scrollbar-width:none;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.tabs::-webkit-scrollbar{display:none;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.tab{flex:1;min-width:90px;padding:14px 8px;background:none;border:none;color:var(--gris);font-family:'Nunito';font-weight:700;font-size:.8rem;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.tab.active{color:var(--verde);border-bottom-color:var(--verde);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.tab:hover:not(.active){color:var(--texto);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.section{display:none;padding:24px 16px 80px;max-width:900px;margin:0 auto;position:relative;z-index:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.section.active{display:block;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn{padding:12px 20px;border-radius:12px;border:none;font-family:'Nunito';font-weight:800;font-size:.93rem;cursor:pointer;transition:all .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-verde{background:var(--verde);color:#000;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-verde:hover{background:#00E060;transform:scale(1.03);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-rojo{background:var(--rojo);color:#fff;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-rojo:hover{background:#FF5252;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-sm{padding:7px 14px;font-size:.78rem;border-radius:9px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-warn{background:rgba(255,152,0,.12);border:1px solid rgba(255,152,0,.3);color:#FFB300;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-warn:hover{background:rgba(255,152,0,.22);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>input[type=text],input[type=number],input[type=password],input[type=datetime-local]{padding:11px 14px;background:var(--card);border:1px solid var(--card-border);border-radius:11px;color:var(--texto);font-family:'Nunito';font-size:.93rem;outline:none;transition:border-color .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input:focus{border-color:var(--verde);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input::placeholder{color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input[type=datetime-local]{color-scheme:dark;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.section-title{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:2px;margin-bottom:16px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.empty-state{text-align:center;padding:50px 20px;color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.empty-state .emoji{font-size:3rem;margin-bottom:12px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.empty-state p{font-size:.9rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:12px;transition:border-color .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card:hover{border-color:rgba(0,200,83,.22);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.info-box{border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.83rem;line-height:1.6;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);color:#ddd;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.info-box strong{color:var(--oro);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>#admin-lock-inner{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:14px;padding:18px;margin-bottom:18px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#admin-lock-inner h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.lock-row{display:flex;gap:8px;flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.lock-row input{flex:1;min-width:160px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.admin-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:var(--oro);padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:800;margin-left:8px;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-panel{background:rgba(0,200,83,.06);border:1px solid rgba(0,200,83,.2);border-radius:14px;padding:18px;margin-bottom:18px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-panel h3{font-size:.78rem;color:var(--verde);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-row input{flex:1;min-width:200px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-current{font-size:.8rem;color:var(--gris);margin-top:8px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.deadline-current strong{color:var(--texto);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.privacy-shield{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:rgba(136,153,170,.06);border:1px dashed rgba(136,153,170,.22);border-radius:12px;margin-top:8px;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.privacy-shield p{font-size:.77rem;color:var(--gris);line-height:1.5;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.rules-hero{background:linear-gradient(135deg,var(--verde-oscuro),var(--azul-claro));border-radius:20px;padding:28px;margin-bottom:20px;border:1px solid rgba(0,200,83,.3);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.rules-hero h2{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:2px;color:var(--oro);margin-bottom:12px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.scoring-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:20px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card{border-radius:16px;padding:20px;text-align:center;border:2px solid;transition:transform .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card:hover{transform:translateY(-3px);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.gold{border-color:var(--oro);background:rgba(255,215,0,.08);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.verde{border-color:var(--verde);background:rgba(0,200,83,.08);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.gray{border-color:var(--gris);background:rgba(136,153,170,.08);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card .pts{font-family:'Bebas Neue';font-size:3.5rem;line-height:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.gold .pts{color:var(--oro);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.verde .pts{color:var(--verde);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card.gray .pts{color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card .label{font-weight:800;font-size:.86rem;margin:6px 0 4px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-card .desc{font-size:.76rem;color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.example-box{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px;margin-bottom:16px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.example-box h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.example-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.87rem;flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge{padding:3px 10px;border-radius:20px;font-weight:800;font-size:.76rem;white-space:nowrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge.p2{background:var(--oro);color:#000;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge.p1{background:var(--verde);color:#000;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge.p0{background:var(--gris);color:#fff;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.input-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.input-row input{flex:1;min-width:180px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participants-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participant-card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;position:relative;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participant-card .avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participant-card .name{font-weight:800;font-size:.9rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participant-card .pts-count{font-family:'Bebas Neue';font-size:1.6rem;color:var(--verde);line-height:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.participant-card .pts-label{font-size:.7rem;color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.del-btn{position:absolute;top:7px;right:7px;background:none;border:none;color:var(--gris);cursor:pointer;font-size:.93rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.del-btn:hover{color:var(--rojo);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.partido-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.partido-num{font-family:'Bebas Neue';font-size:.92rem;color:var(--gris);white-space:nowrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.partido-teams{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:.93rem;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.team-name{flex:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.vs-badge{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:var(--oro);padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:800;white-space:nowrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.result-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.result-row label{font-size:.76rem;color:var(--gris);font-weight:700;min-width:105px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-inputs{display:flex;align-items:center;gap:5px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-inputs input{width:48px;padding:7px;text-align:center;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:8px;font-size:1rem;font-weight:800;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.score-inputs span{font-weight:900;color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pronos-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-tag{display:flex;align-items:center;gap:5px;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:20px;padding:4px 11px;font-size:.76rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-tag .pn{font-weight:700;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-tag .ps{font-family:'Bebas Neue';font-size:.92rem;color:var(--oro);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-tag .pp{font-weight:800;border-radius:10px;padding:1px 7px;font-size:.7rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pp2{background:var(--oro);color:#000;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pp1{background:var(--verde);color:#000;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pp0{background:rgba(136,153,170,.3);color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pp-p{background:rgba(136,153,170,.12);color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.add-partido-form{background:var(--card);border:1px dashed var(--card-border);border-radius:16px;padding:18px;margin-bottom:14px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.add-partido-form h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.form-row input{flex:1;min-width:130px;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.select-persona{padding:10px 14px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--texto);font-family:'Nunito';font-size:.88rem;outline:none;cursor:pointer;min-width:160px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-form{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:14px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-form h3{font-family:'Bebas Neue';font-size:1.15rem;letter-spacing:1px;margin-bottom:4px;color:var(--oro);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-partido-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--card-border);flex-wrap:wrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-partido-row:last-child{border-bottom:none;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-teams{flex:1;font-weight:800;font-size:.86rem;min-width:150px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-inputs{display:flex;align-items:center;gap:4px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.prono-inputs input{width:42px;padding:6px;text-align:center;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:6px;font-size:.93rem;font-weight:800;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:11px;display:flex;align-items:center;gap:14px;transition:all .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-card:hover{border-color:rgba(0,200,83,.3);transform:translateX(3px);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pos{font-family:'Bebas Neue';font-size:2.3rem;color:var(--gris);min-width:38px;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pos.pos1{color:var(--oro);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pos.pos2{color:#C0C0C0;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pos.pos3{color:#CD7F32;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.35rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-info{flex:1;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-name{font-weight:900;font-size:1rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-detail{font-size:.76rem;color:var(--gris);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pts{font-family:'Bebas Neue';font-size:2.1rem;color:var(--verde);text-align:right;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.ranking-pts span{font-family:'Nunito';font-size:.7rem;color:var(--gris);font-weight:700;display:block;line-height:1;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde);color:#000;padding:12px 24px;border-radius:30px;font-weight:800;font-size:.87rem;z-index:1000;transition:transform .3s ease;pointer-events:none;white-space:nowrap;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.toast.show{transform:translateX(-50%) translateY(0);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@media(max-width:480px){.result-row{flex-direction:column;align-items:flex-start;}}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="loading-overlay"&gt;&lt;div class="spinner"&gt;&lt;/div&gt;&lt;p&gt;Conectando con Firebase…&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;div id="sync-status" class="synced"&gt;● En línea&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="trophy"&gt;🏆&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Quiniela Mundial 2026&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p id="header-sub"&gt;¡Que gane el mejor!&lt;/p&gt;</p>
+<p class="p1">&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="deadline-banner" class="none"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="tabs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab active" onclick="switchTab('reglas',this)"&gt;📋 Reglas&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab" onclick="switchTab('participantes',this)"&gt;👥 Participantes&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab" onclick="switchTab('partidos',this)"&gt;⚽ Partidos&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab" onclick="switchTab('pronosticos',this)"&gt;🎯 Pronósticos&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="tab" onclick="switchTab('marcador',this)"&gt;🏅 Marcador&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- REGLAS --&gt;</p>
+<p class="p1">&lt;div id="tab-reglas" class="section active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="rules-hero"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;🎯 ¿Cómo se juega?&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p style="color:#ccc;font-size:.91rem;line-height:1.6;"&gt;Cada participante predice el marcador de cada partido &lt;strong&gt;antes del deadline&lt;/strong&gt;. Según qué tan acertado estés, ganas puntos. Al final, ¡el que más puntos tenga gana!&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="scoring-cards"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="score-card gold"&gt;&lt;div class="pts"&gt;2&lt;/div&gt;&lt;div class="label"&gt;⭐ Marcador Exacto&lt;/div&gt;&lt;div class="desc"&gt;Acertaste el resultado completo, gol por gol&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="score-card verde"&gt;&lt;div class="pts"&gt;1&lt;/div&gt;&lt;div class="label"&gt;✅ Resultado Correcto&lt;/div&gt;&lt;div class="desc"&gt;Acertaste quién ganó o que fue empate, pero no el marcador exacto&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="score-card gray"&gt;&lt;div class="pts"&gt;0&lt;/div&gt;&lt;div class="label"&gt;❌ Sin puntos&lt;/div&gt;&lt;div class="desc"&gt;El resultado no coincidió con tu pronóstico&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="example-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;📖 Ejemplos&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row"&gt;&lt;span&gt;Resultado real: &lt;strong&gt;México 2 – 1 Argentina&lt;/strong&gt;&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;2-1&lt;/strong&gt;&lt;/span&gt;&lt;span class="badge p2"&gt;2 PTS ⭐ Exacto&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;3-0&lt;/strong&gt; (México gana)&lt;/span&gt;&lt;span class="badge p1"&gt;1 PTO ✅ Resultado&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;0-2&lt;/strong&gt; (Argentina gana)&lt;/span&gt;&lt;span class="badge p0"&gt;0 PTS ❌&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;hr style="border-color:var(--card-border);margin:12px 0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row"&gt;&lt;span&gt;Resultado real: &lt;strong&gt;España 1 – 1 Brasil&lt;/strong&gt;&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;1-1&lt;/strong&gt;&lt;/span&gt;&lt;span class="badge p2"&gt;2 PTS ⭐ Exacto&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;0-0&lt;/strong&gt; (empate también)&lt;/span&gt;&lt;span class="badge p1"&gt;1 PTO ✅ Resultado&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="example-row" style="margin-left:12px"&gt;&lt;span&gt;Pronosticaste &lt;strong&gt;2-0&lt;/strong&gt; (España gana)&lt;/span&gt;&lt;span class="badge p0"&gt;0 PTS ❌&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="example-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;📌 Reglas importantes&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.87rem;color:#ccc;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;⏰ Los pronósticos deben enviarse &lt;strong&gt;antes del deadline&lt;/strong&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;🔒 Los pronósticos son &lt;strong&gt;privados hasta que cierre el deadline&lt;/strong&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;✏️ Una vez guardado tu pronóstico, &lt;strong&gt;no se puede cambiar&lt;/strong&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;🔢 Solo números enteros (0, 1, 2, 3…)&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;🔐 Solo el &lt;strong&gt;administrador&lt;/strong&gt; puede agregar partidos y resultados&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- PARTICIPANTES --&gt;</p>
+<p class="p1">&lt;div id="tab-participantes" class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="section-title"&gt;👥 Participantes&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="admin-lock-p"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="add-participant-ui" style="display:none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="input-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="new-participant" placeholder="Nombre del participante..." maxlength="20" onkeydown="if(event.key==='Enter')addParticipant()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-verde" onclick="addParticipant()"&gt;Agregar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="participants-grid" id="participants-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="empty-state"&gt;&lt;div class="emoji"&gt;⏳&lt;/div&gt;&lt;p&gt;Cargando...&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- PARTIDOS --&gt;</p>
+<p class="p1">&lt;div id="tab-partidos" class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="section-title" style="margin-bottom:0"&gt;⚽ Partidos&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-verde btn-sm" id="btn-add-partido" style="display:none" onclick="toggleAddForm()"&gt;+ Agregar partido&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="admin-lock-part"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="deadline-admin-panel" style="display:none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="deadline-panel"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;⏰ Deadline global de pronósticos&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;p style="font-size:.79rem;color:var(--gris);"&gt;Fecha y hora límite. Después de esta hora los pronósticos se revelan a todos.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="deadline-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="datetime-local" id="deadline-input"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-verde btn-sm" onclick="saveDeadline()"&gt;Guardar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-warn btn-sm" onclick="clearDeadline()"&gt;Quitar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="deadline-current" id="deadline-current-txt"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="add-partido-form" id="add-partido-form" style="display:none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;➕ Nuevo partido&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="new-local" placeholder="Equipo local (ej: México)" maxlength="25"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="new-visita" placeholder="Equipo visitante (ej: Argentina)" maxlength="25"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="text" id="new-fecha" placeholder="Fecha (ej: Jue 12 Jun, 3pm)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-verde" onclick="addPartido()"&gt;Guardar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="partidos-list"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="empty-state" id="no-partidos"&gt;&lt;div class="emoji"&gt;⚽&lt;/div&gt;&lt;p&gt;Aún no hay partidos registrados&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- PRONÓSTICOS --&gt;</p>
+<p class="p1">&lt;div id="tab-pronosticos" class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="section-title"&gt;🎯 Pronósticos&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="info-box" id="prono-info-box"&gt;&lt;strong&gt;💡 ¿Cómo funciona?&lt;/strong&gt;&lt;br&gt;Selecciona tu nombre, escribe tu pronóstico y presiona &lt;strong&gt;Guardar&lt;/strong&gt;. ¡Solo puedes hacerlo una vez!&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label style="font-size:.87rem;color:var(--gris);font-weight:700;"&gt;Soy:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;select class="select-persona" id="prono-persona" onchange="renderPronosForm()"&gt;&lt;option value=""&gt;— Selecciona tu nombre —&lt;/option&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="prono-form-container"&gt;&lt;div class="empty-state"&gt;&lt;div class="emoji"&gt;🎯&lt;/div&gt;&lt;p&gt;Selecciona tu nombre arriba&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- MARCADOR --&gt;</p>
+<p class="p1">&lt;div id="tab-marcador" class="section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="section-title"&gt;🏅 Marcador General&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="ranking-list"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="empty-state" id="no-ranking"&gt;&lt;div class="emoji"&gt;🏅&lt;/div&gt;&lt;p&gt;Aún no hay puntos registrados&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="toast" id="toast"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- FIREBASE SDK --&gt;</p>
+<p class="p1">&lt;script type="module"&gt;</p>
+<p class="p1">import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";</p>
+<p class="p1">import { getDatabase, ref, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// FIREBASE CONFIG — tus credenciales</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">const firebaseConfig = {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>apiKey: "AIzaSyDTIjCbIhyNMws3GkXIfWm1fAV1strp3cU",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>authDomain: "quiniela-mundial-jimenez-2026.firebaseapp.com",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>databaseURL: "https://quiniela-mundial-jimenez-2026-default-rtdb.firebaseio.com",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>projectId: "quiniela-mundial-jimenez-2026",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>storageBucket: "quiniela-mundial-jimenez-2026.firebasestorage.app",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>messagingSenderId: "595305024102",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>appId: "1:595305024102:web:e7d58a2cea71ac3c543ba7",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>measurementId: "G-T3JPTGYZZ0"</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">const app = initializeApp(firebaseConfig);</p>
+<p class="p1">const db<span class="Apple-converted-space">  </span>= getDatabase(app);</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// STATE LOCAL (espejo de Firebase)</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">const ADMIN_PASS = 'gol2026';</p>
+<p class="p1">let state = { participants:[], partidos:[], pronosticos:{}, deadline:null };</p>
+<p class="p1">let isAdmin = false;</p>
+<p class="p2"><br></p>
+<p class="p1">// Admin session en localStorage (solo para esta sesión/dispositivo)</p>
+<p class="p1">function checkAdminSession(){ isAdmin = localStorage.getItem('quiniela-admin')==='1'; }</p>
+<p class="p1">function setAdminSession(v){ localStorage.setItem('quiniela-admin', v?'1':'0'); isAdmin=v; }</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// FIREBASE LISTENERS — escucha cambios en tiempo real</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function initListeners(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>onValue(ref(db,'quiniela'), snap =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const data = snap.val() || {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>state.participants = data.participants ? Object.values(data.participants) : [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>state.partidos <span class="Apple-converted-space">    </span>= data.partidos <span class="Apple-converted-space">    </span>? Object.values(data.partidos) <span class="Apple-converted-space">    </span>: [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>state.pronosticos<span class="Apple-converted-space">  </span>= data.pronosticos<span class="Apple-converted-space">  </span>|| {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>state.deadline <span class="Apple-converted-space">    </span>= data.deadline <span class="Apple-converted-space">    </span>|| null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('synced');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>renderDeadlineBanner();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>renderCurrentTab();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('loading-overlay').style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}, err =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('error');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>console.error(err);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('loading-overlay').style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// FIREBASE WRITE HELPERS</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">async function fbSet(path, value){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await set(ref(db, path), value);</p>
+<p class="p1">}</p>
+<p class="p1">async function fbUpdate(path, value){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await update(ref(db, path), value);</p>
+<p class="p1">}</p>
+<p class="p1">async function fbRemove(path){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await remove(ref(db, path));</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// UTILS</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">const COLORS=['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#00ACC1','#F4511E','#6D4C41','#00897B','#C0CA33'];</p>
+<p class="p1">const EMOJIS=['🦁','⭐','🦅','🐯','🦊','🐝','🦋','🌟','🔥','💫'];</p>
+<p class="p2"><br></p>
+<p class="p1">function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=&gt;t.classList.remove('show'),2400); }</p>
+<p class="p1">function setSyncStatus(s){ const el=document.getElementById('sync-status'); if(s==='syncing'){el.className='syncing';el.textContent='⟳ Guardando...';}else if(s==='error'){el.className='error';el.textContent='⚠ Sin conexión';}else{el.className='synced';el.textContent='● En línea';} }</p>
+<p class="p2"><br></p>
+<p class="p1">function calcPts(pL,pV,rL,rV){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(rL==null||rV==null) return null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(pL===rL&amp;&amp;pV===rV) return 2;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pr=pL&gt;pV?'L':pL&lt;pV?'V':'E', rr=rL&gt;rV?'L':rL&lt;rV?'V':'E';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return pr===rr?1:0;</p>
+<p class="p1">}</p>
+<p class="p1">function calcTotal(name){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let t=0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>state.partidos.forEach(p=&gt;{ if(p.resultLocal==null) return; const pr=(state.pronosticos[p.id]||{})[name]; if(pr) t+=calcPts(pr.local,pr.visita,p.resultLocal,p.resultVisita)||0; });</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return t;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function deadlinePassed(){ return state.deadline?new Date()&gt;new Date(state.deadline):false; }</p>
+<p class="p1">function deadlineFmt(){ if(!state.deadline) return null; return new Date(state.deadline).toLocaleString('es-MX',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// DEADLINE BANNER</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function renderDeadlineBanner(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el=document.getElementById('deadline-banner');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!state.deadline){el.className='none';return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(deadlinePassed()){el.className='closed';el.textContent='🔒 Deadline cerrado — Los pronósticos ya son visibles para todos';}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else{el.className='open';el.textContent='⏰ Deadline: '+deadlineFmt()+' — Los pronósticos son privados hasta entonces';}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// TABS</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">let currentTab='reglas';</p>
+<p class="p1">window.switchTab=function(tab,el){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>currentTab=tab;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.tab').forEach(t=&gt;t.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.section').forEach(s=&gt;s.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(el) el.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('tab-'+tab).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderCurrentTab();</p>
+<p class="p1">};</p>
+<p class="p1">function renderCurrentTab(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(currentTab==='participantes') renderParticipants();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(currentTab==='partidos') renderPartidos();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(currentTab==='pronosticos'){updatePronoSelect();renderPronosForm();}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(currentTab==='marcador') renderRanking();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// ADMIN LOCK</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function renderAdminLock(containerId, onUnlock){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el=document.getElementById(containerId); if(!el) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(isAdmin){el.innerHTML='';onUnlock();return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML=`&lt;div id="admin-lock-inner"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;🔐 Solo administrador&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p style="font-size:.78rem;color:var(--gris);margin-bottom:10px;"&gt;Ingresa la contraseña para hacer cambios.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="lock-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="password" id="apw-${containerId}" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')window.tryLogin('${containerId}')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-verde btn-sm" onclick="window.tryLogin('${containerId}')"&gt;Entrar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;`;</p>
+<p class="p1">}</p>
+<p class="p1">window.tryLogin=function(cid){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pw=document.getElementById('apw-'+cid)?.value||'';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(pw===ADMIN_PASS){ setAdminSession(true); toast('✅ Modo administrador activado'); document.getElementById('header-sub').innerHTML='¡Que gane el mejor! &lt;span class="admin-badge"&gt;🔐 Admin&lt;/span&gt;'; renderCurrentTab(); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else toast('❌ Contraseña incorrecta');</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// DEADLINE ADMIN</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">window.saveDeadline=async function(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const val=document.getElementById('deadline-input').value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!val){toast('⚠️ Selecciona fecha y hora');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbSet('quiniela/deadline', new Date(val).toISOString());</p>
+<p class="p1"><span class="Apple-converted-space">  </span>toast('✅ Deadline guardado');</p>
+<p class="p1">};</p>
+<p class="p1">window.clearDeadline=async function(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!confirm('¿Quitar el deadline?')) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbRemove('quiniela/deadline');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>toast('⚠️ Deadline eliminado');</p>
+<p class="p1">};</p>
+<p class="p1">function renderDeadlinePanel(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const panel=document.getElementById('deadline-admin-panel');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!isAdmin){panel.style.display='none';return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>panel.style.display='block';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const inp=document.getElementById('deadline-input');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(state.deadline&amp;&amp;!inp.value){ const d=new Date(state.deadline); inp.value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const txt=document.getElementById('deadline-current-txt');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(state.deadline){ const p=deadlinePassed(); txt.innerHTML=`Actual: &lt;strong&gt;${deadlineFmt()}&lt;/strong&gt; — &lt;span style="color:${p?'var(--rojo)':'var(--verde)'}"&gt;${p?'🔒 Cerrado':'🟢 Abierto'}&lt;/span&gt;`; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else txt.textContent='Sin deadline — los pronósticos siempre son visibles.';</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// PARTICIPANTES</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function renderParticipants(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderAdminLock('admin-lock-p',()=&gt;{document.getElementById('add-participant-ui').style.display='block';});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!isAdmin) document.getElementById('add-participant-ui').style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const grid=document.getElementById('participants-grid');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!state.participants.length){grid.innerHTML=`&lt;div class="empty-state"&gt;&lt;div class="emoji"&gt;👥&lt;/div&gt;&lt;p&gt;Agrega participantes arriba&lt;/p&gt;&lt;/div&gt;`;return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>grid.innerHTML=state.participants.map(p=&gt;`&lt;div class="participant-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>${isAdmin?`&lt;button class="del-btn" onclick="window.removeParticipant('${p.id}')"&gt;✕&lt;/button&gt;`:''}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="avatar" style="background:${p.color}22;border:2px solid ${p.color}"&gt;${p.emoji}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="name"&gt;${p.name}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="pts-count"&gt;${calcTotal(p.name)}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="pts-label"&gt;puntos&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;`).join('');</p>
+<p class="p1">}</p>
+<p class="p1">window.addParticipant=async function(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const inp=document.getElementById('new-participant'); const name=inp.value.trim(); if(!name) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(state.participants.find(p=&gt;p.name.toLowerCase()===name.toLowerCase())){toast('⚠️ Ya existe ese nombre');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const idx=state.participants.length;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const id='p'+Date.now();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbSet(`quiniela/participants/${id}`,{id,name,color:COLORS[idx%COLORS.length],emoji:EMOJIS[idx%EMOJIS.length]});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>inp.value=''; toast('✅ '+name+' agregado');</p>
+<p class="p1">};</p>
+<p class="p1">window.removeParticipant=async function(id){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!confirm('¿Eliminar este participante?')) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbRemove(`quiniela/participants/${id}`);</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// PARTIDOS</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function renderPartidos(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>renderAdminLock('admin-lock-part',()=&gt;{document.getElementById('btn-add-partido').style.display='inline-flex';renderDeadlinePanel();});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!isAdmin){document.getElementById('btn-add-partido').style.display='none';document.getElementById('deadline-admin-panel').style.display='none';}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const list=document.getElementById('partidos-list');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const empty=document.getElementById('no-partidos');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const passed=deadlinePassed();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const canSeeAll=isAdmin||passed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!state.partidos.length){list.innerHTML='';empty.style.display='block';return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>empty.style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>list.innerHTML=state.partidos.map((p,i)=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const hasResult=p.resultLocal!=null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let pronosHtml='';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(state.participants.length){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(canSeeAll){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const tags=state.participants.map(part=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const prono=(state.pronosticos[p.id]||{})[part.name];</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if(!prono) return `&lt;div class="prono-tag"&gt;&lt;span class="pn"&gt;${part.name}&lt;/span&gt;&lt;span class="pp pp-p"&gt;—&lt;/span&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const pts=calcPts(prono.local,prono.visita,p.resultLocal,p.resultVisita);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const pc=pts===2?'pp2':pts===1?'pp1':pts===0?'pp0':'pp-p';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const pl=pts===null?'⏳':pts===2?'⭐2':pts===1?'✅1':'❌0';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>return `&lt;div class="prono-tag"&gt;&lt;span class="pn"&gt;${part.name}&lt;/span&gt;&lt;span class="ps"&gt;${prono.local}-${prono.visita}&lt;/span&gt;&lt;span class="pp ${pc}"&gt;${pl}&lt;/span&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}).join('');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>pronosHtml=`&lt;div&gt;&lt;div style="font-size:.72rem;color:var(--gris);font-weight:700;margin-bottom:5px"&gt;PRONÓSTICOS:&lt;/div&gt;&lt;div class="pronos-grid"&gt;${tags}&lt;/div&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const count=state.participants.filter(part=&gt;{const pr=(state.pronosticos[p.id]||{})[part.name];return pr&amp;&amp;pr.local!==undefined;}).length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>pronosHtml=`&lt;div class="privacy-shield"&gt;&lt;span style="font-size:1.5rem"&gt;🔒&lt;/span&gt;&lt;p&gt;${count} de ${state.participants.length} participante${state.participants.length!==1?'s':''} ya ${count===1?'metió':'metieron'} su pronóstico.&lt;br&gt;Se revelarán cuando cierre el deadline.&lt;/p&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const adminResult=isAdmin</p>
+<p class="p1"><span class="Apple-converted-space">      </span>?`&lt;div class="result-row"&gt;&lt;label&gt;📊 Resultado real:&lt;/label&gt;&lt;div class="score-inputs"&gt;&lt;input type="number" id="rl-${p.id}" min="0" max="99" value="${hasResult?p.resultLocal:''}" placeholder="–"&gt;&lt;span&gt;–&lt;/span&gt;&lt;input type="number" id="rv-${p.id}" min="0" max="99" value="${hasResult?p.resultVisita:''}" placeholder="–"&gt;&lt;/div&gt;&lt;button class="btn btn-verde btn-sm" onclick="window.saveResult('${p.id}')"&gt;💾&lt;/button&gt;${hasResult?`&lt;span style="color:var(--verde);font-weight:800;font-size:.79rem"&gt;✅ ${p.resultLocal}–${p.resultVisita}&lt;/span&gt;`:''}&lt;/div&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">      </span>:(hasResult?`&lt;div style="margin-bottom:10px;font-size:.86rem;color:var(--verde);font-weight:800"&gt;📊 Resultado: ${p.resultLocal} – ${p.resultVisita}&lt;/div&gt;`:`&lt;div style="margin-bottom:10px;font-size:.79rem;color:var(--gris)"&gt;⏳ Resultado pendiente&lt;/div&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;div class="card"&gt;&lt;div class="partido-top"&gt;&lt;span class="partido-num"&gt;Partido ${i+1}${p.fecha?' · '+p.fecha:''}&lt;/span&gt;&lt;div class="partido-teams"&gt;&lt;span class="team-name"&gt;🏠 ${p.local}&lt;/span&gt;&lt;span class="vs-badge"&gt;VS&lt;/span&gt;&lt;span class="team-name"&gt;${p.visita} ✈️&lt;/span&gt;&lt;/div&gt;${isAdmin?`&lt;button class="btn btn-rojo btn-sm" onclick="window.removePartido('${p.id}')"&gt;✕&lt;/button&gt;`:''}&lt;/div&gt;${adminResult}${pronosHtml}&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}).join('');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">window.toggleAddForm=function(){ const f=document.getElementById('add-partido-form'); f.style.display=f.style.display==='none'?'block':'none'; };</p>
+<p class="p2"><br></p>
+<p class="p1">window.addPartido=async function(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const local=document.getElementById('new-local').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const visita=document.getElementById('new-visita').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const fecha=document.getElementById('new-fecha').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!local||!visita){toast('⚠️ Escribe los dos equipos');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const id='m'+Date.now();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbSet(`quiniela/partidos/${id}`,{id,local,visita,fecha,resultLocal:null,resultVisita:null});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('new-local').value='';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('new-visita').value='';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('new-fecha').value='';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('add-partido-form').style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>toast('⚽ Partido agregado');</p>
+<p class="p1">};</p>
+<p class="p1">window.removePartido=async function(id){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!confirm('¿Eliminar este partido?')) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbRemove(`quiniela/partidos/${id}`);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbRemove(`quiniela/pronosticos/${id}`);</p>
+<p class="p1">};</p>
+<p class="p1">window.saveResult=async function(id){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const rl=document.getElementById('rl-'+id).value, rv=document.getElementById('rv-'+id).value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(rl===''||rv===''){toast('⚠️ Escribe ambos goles');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await fbUpdate(`quiniela/partidos/${id}`,{resultLocal:parseInt(rl),resultVisita:parseInt(rv)});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>toast('✅ Resultado guardado');</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// PRONÓSTICOS</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function updatePronoSelect(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const sel=document.getElementById('prono-persona'); const val=sel.value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>sel.innerHTML='&lt;option value=""&gt;— Selecciona tu nombre —&lt;/option&gt;'+state.participants.map(p=&gt;`&lt;option value="${p.name}" ${p.name===val?'selected':''}&gt;${p.emoji} ${p.name}&lt;/option&gt;`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(val) sel.value=val;</p>
+<p class="p1">}</p>
+<p class="p1">function renderPronosForm(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const persona=document.getElementById('prono-persona').value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const cont=document.getElementById('prono-form-container');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const passed=deadlinePassed();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ib=document.getElementById('prono-info-box');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(passed){ ib.innerHTML=`&lt;strong style="color:var(--rojo)"&gt;🔒 Deadline cerrado.&lt;/strong&gt; Ya no se pueden ingresar pronósticos.`; ib.style.background='rgba(229,57,53,.07)'; ib.style.borderColor='rgba(229,57,53,.25)'; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else if(state.deadline){ ib.innerHTML=`&lt;strong&gt;⏰ Deadline: ${deadlineFmt()}&lt;/strong&gt;&lt;br&gt;Mete tus pronósticos antes de esa hora.`; ib.style.background=''; ib.style.borderColor=''; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else { ib.innerHTML=`&lt;strong&gt;💡 Sin deadline configurado.&lt;/strong&gt; Puedes meter tus pronósticos cuando quieras.`; ib.style.background=''; ib.style.borderColor=''; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!persona){cont.innerHTML=`&lt;div class="empty-state"&gt;&lt;div class="emoji"&gt;🎯&lt;/div&gt;&lt;p&gt;Selecciona tu nombre arriba&lt;/p&gt;&lt;/div&gt;`;return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!state.partidos.length){cont.innerHTML=`&lt;div class="empty-state"&gt;&lt;div class="emoji"&gt;⚽&lt;/div&gt;&lt;p&gt;Aún no hay partidos registrados&lt;/p&gt;&lt;/div&gt;`;return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const rows=state.partidos.map(p=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const prono=(state.pronosticos[p.id]||{})[persona]||{};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const locked=prono.local!==undefined;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const cantAdd=passed&amp;&amp;!locked;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const hasResult=p.resultLocal!=null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pts=locked?calcPts(prono.local,prono.visita,p.resultLocal,p.resultVisita):null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const ptsTag=pts===2?'&lt;span class="badge p2"&gt;⭐ 2 pts&lt;/span&gt;':pts===1?'&lt;span class="badge p1"&gt;✅ 1 pto&lt;/span&gt;':pts===0?'&lt;span class="badge p0"&gt;❌ 0 pts&lt;/span&gt;':'';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;div class="prono-partido-row"&gt;&lt;div class="prono-teams"&gt;⚽ ${p.local} vs ${p.visita}${p.fecha?`&lt;br&gt;&lt;span style="font-size:.7rem;color:var(--gris)"&gt;${p.fecha}&lt;/span&gt;`:''}&lt;/div&gt;&lt;div class="prono-inputs"&gt;&lt;input type="number" min="0" max="99" id="pi-${p.id}-l" value="${locked?prono.local:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}&gt;&lt;span style="color:var(--gris);font-weight:900"&gt;–&lt;/span&gt;&lt;input type="number" min="0" max="99" id="pi-${p.id}-v" value="${locked?prono.visita:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}&gt;&lt;/div&gt;${locked?ptsTag:''}${cantAdd?'&lt;span style="font-size:.7rem;color:var(--rojo);font-weight:700"&gt;⏰ Cerrado&lt;/span&gt;':''}${locked&amp;&amp;!hasResult?'&lt;span style="font-size:.7rem;color:var(--gris)"&gt;⏳ esperando resultado&lt;/span&gt;':''}&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}).join('');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const allLocked=state.partidos.every(p=&gt;{const pr=(state.pronosticos[p.id]||{})[persona];return pr&amp;&amp;pr.local!==undefined;});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const showSave=!passed&amp;&amp;!allLocked;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cont.innerHTML=`&lt;div class="prono-form"&gt;&lt;h3&gt;${persona}&lt;/h3&gt;&lt;p style="font-size:.75rem;color:var(--gris);margin-bottom:12px"&gt;Una vez guardado no se puede cambiar.&lt;/p&gt;${rows}${showSave?`&lt;div style="margin-top:16px;text-align:right"&gt;&lt;button class="btn btn-verde" onclick="window.savePronosticos('${persona}')"&gt;💾 Guardar pronósticos&lt;/button&gt;&lt;/div&gt;`:''}${allLocked?`&lt;div style="margin-top:14px;text-align:center;font-size:.83rem;color:var(--verde);font-weight:800"&gt;✅ Todos tus pronósticos están guardados&lt;/div&gt;`:''}${passed&amp;&amp;!allLocked?`&lt;div style="margin-top:14px;text-align:center;font-size:.83rem;color:var(--rojo);font-weight:800"&gt;🔒 El deadline cerró&lt;/div&gt;`:''}&lt;/div&gt;`;</p>
+<p class="p1">}</p>
+<p class="p1">window.savePronosticos=async function(persona){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(deadlinePassed()){toast('⏰ El deadline ya cerró');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let count=0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const updates={};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>state.partidos.forEach(p=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if((state.pronosticos[p.id]||{})[persona]?.local!==undefined) return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const lv=document.getElementById('pi-'+p.id+'-l')?.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const vv=document.getElementById('pi-'+p.id+'-v')?.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(lv!=null&amp;&amp;vv!=null&amp;&amp;lv!==''&amp;&amp;vv!==''){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updates[`quiniela/pronosticos/${p.id}/${persona}`]={local:parseInt(lv),visita:parseInt(vv)};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>count++;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!count){toast('⚠️ No hay pronósticos nuevos');return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>await update(ref(db),updates);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>toast('✅ '+count+' pronóstico'+(count&gt;1?'s':'')+' guardado'+(count&gt;1?'s':''));</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// RANKING</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">function renderRanking(){</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const list=document.getElementById('ranking-list'); const empty=document.getElementById('no-ranking');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(!state.participants.length){list.innerHTML='';empty.style.display='block';return;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ranked=state.participants.map(p=&gt;({...p,pts:calcTotal(p.name)})).sort((a,b)=&gt;b.pts-a.pts);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const jugados=state.partidos.filter(p=&gt;p.resultLocal!=null).length;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>empty.style.display='none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>list.innerHTML=ranked.map((p,i)=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pos=i+1,pc=pos===1?'pos1':pos===2?'pos2':pos===3?'pos3':'';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':pos;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;div class="ranking-card"&gt;&lt;div class="ranking-pos ${pc}"&gt;${medal}&lt;/div&gt;&lt;div class="ranking-avatar" style="background:${p.color}22;border:2px solid ${p.color}"&gt;${p.emoji}&lt;/div&gt;&lt;div class="ranking-info"&gt;&lt;div class="ranking-name"&gt;${p.name}&lt;/div&gt;&lt;div class="ranking-detail"&gt;${jugados} partido${jugados!==1?'s':''} jugado${jugados!==1?'s':''}&lt;/div&gt;&lt;/div&gt;&lt;div class="ranking-pts"&gt;${p.pts}&lt;span&gt;puntos&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}).join('');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">// INIT</p>
+<p class="p1">// ══════════════════════════════════════════</p>
+<p class="p1">checkAdminSession();</p>
+<p class="p1">if(isAdmin) document.getElementById('header-sub').innerHTML='¡Que gane el mejor! &lt;span class="admin-badge"&gt;🔐 Admin&lt;/span&gt;';</p>
+<p class="p1">initListeners();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
