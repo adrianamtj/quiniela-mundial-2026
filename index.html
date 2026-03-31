@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ Quiniela Mundial 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde:#00C853; --verde-oscuro:#007B33; --oro:#FFD700;
+    --rojo:#E53935; --azul-noche:#0D1B2A; --azul-medio:#1A2F46;
+    --azul-claro:#243B55; --texto:#F0F4F8; --gris:#8899AA;
+    --card:rgba(255,255,255,0.05); --card-border:rgba(255,255,255,0.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Nunito',sans-serif;background:var(--azul-noche);color:var(--texto);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 10% 20%,rgba(0,200,83,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 90% 80%,rgba(255,215,0,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+  #loading-overlay{position:fixed;inset:0;background:var(--azul-noche);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;}
+  .spinner{width:48px;height:48px;border:4px solid rgba(0,200,83,.2);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading-overlay p{color:var(--gris);font-size:.9rem;}
+
+  #sync-status{position:fixed;top:10px;right:12px;z-index:200;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:800;transition:all .3s;}
+  #sync-status.synced{background:rgba(0,200,83,.2);color:var(--verde);border:1px solid rgba(0,200,83,.3);}
+  #sync-status.syncing{background:rgba(255,215,0,.2);color:var(--oro);border:1px solid rgba(255,215,0,.3);}
+  #sync-status.error{background:rgba(229,57,53,.2);color:var(--rojo);border:1px solid rgba(229,57,53,.3);}
+
+  header{position:relative;z-index:10;text-align:center;padding:40px 20px 20px;border-bottom:1px solid var(--card-border);}
+  .trophy{font-size:3rem;animation:bounce 2s infinite;display:inline-block;}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,5rem);letter-spacing:4px;background:linear-gradient(135deg,#FFD700 0%,#00C853 60%,#FFD700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+  header p{color:var(--gris);font-size:.9rem;margin-top:6px;}
+
+  #deadline-banner{margin:0;padding:10px 20px;text-align:center;font-size:.84rem;font-weight:800;position:relative;z-index:10;}
+  #deadline-banner.open{background:rgba(0,200,83,.1);color:var(--verde);border-bottom:1px solid rgba(0,200,83,.2);}
+  #deadline-banner.closed{background:rgba(229,57,53,.1);color:var(--rojo);border-bottom:1px solid rgba(229,57,53,.2);}
+  #deadline-banner.none{display:none;}
+
+  .tabs{position:sticky;top:0;z-index:100;display:flex;background:var(--azul-noche);border-bottom:2px solid var(--card-border);overflow-x:auto;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:1;min-width:90px;padding:14px 8px;background:none;border:none;color:var(--gris);font-family:'Nunito';font-weight:700;font-size:.8rem;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab.active{color:var(--verde);border-bottom-color:var(--verde);}
+  .tab:hover:not(.active){color:var(--texto);}
+
+  .section{display:none;padding:24px 16px 80px;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+  .section.active{display:block;}
+
+  .btn{padding:12px 20px;border-radius:12px;border:none;font-family:'Nunito';font-weight:800;font-size:.93rem;cursor:pointer;transition:all .2s;}
+  .btn-verde{background:var(--verde);color:#000;}
+  .btn-verde:hover{background:#00E060;transform:scale(1.03);}
+  .btn-rojo{background:var(--rojo);color:#fff;}
+  .btn-rojo:hover{background:#FF5252;}
+  .btn-sm{padding:7px 14px;font-size:.78rem;border-radius:9px;}
+  .btn-warn{background:rgba(255,152,0,.12);border:1px solid rgba(255,152,0,.3);color:#FFB300;}
+  .btn-warn:hover{background:rgba(255,152,0,.22);}
+
+  input[type=text],input[type=number],input[type=password],input[type=datetime-local]{padding:11px 14px;background:var(--card);border:1px solid var(--card-border);border-radius:11px;color:var(--texto);font-family:'Nunito';font-size:.93rem;outline:none;transition:border-color .2s;}
+  input:focus{border-color:var(--verde);}
+  input::placeholder{color:var(--gris);}
+  input[type=datetime-local]{color-scheme:dark;}
+
+  .section-title{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:2px;margin-bottom:16px;}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--gris);}
+  .empty-state .emoji{font-size:3rem;margin-bottom:12px;}
+  .empty-state p{font-size:.9rem;}
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:12px;transition:border-color .2s;}
+  .card:hover{border-color:rgba(0,200,83,.22);}
+  .info-box{border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.83rem;line-height:1.6;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);color:#ddd;}
+  .info-box strong{color:var(--oro);}
+
+  #admin-lock-inner{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:14px;padding:18px;margin-bottom:18px;}
+  #admin-lock-inner h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .lock-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .lock-row input{flex:1;min-width:160px;}
+  .admin-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:var(--oro);padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:800;margin-left:8px;}
+
+  .deadline-panel{background:rgba(0,200,83,.06);border:1px solid rgba(0,200,83,.2);border-radius:14px;padding:18px;margin-bottom:18px;}
+  .deadline-panel h3{font-size:.78rem;color:var(--verde);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .deadline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+  .deadline-row input{flex:1;min-width:200px;}
+  .deadline-current{font-size:.8rem;color:var(--gris);margin-top:8px;}
+  .deadline-current strong{color:var(--texto);}
+
+  .privacy-shield{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:rgba(136,153,170,.06);border:1px dashed rgba(136,153,170,.22);border-radius:12px;margin-top:8px;text-align:center;}
+  .privacy-shield p{font-size:.77rem;color:var(--gris);line-height:1.5;}
+
+  .rules-hero{background:linear-gradient(135deg,var(--verde-oscuro),var(--azul-claro));border-radius:20px;padding:28px;margin-bottom:20px;border:1px solid rgba(0,200,83,.3);}
+  .rules-hero h2{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:2px;color:var(--oro);margin-bottom:12px;}
+  .scoring-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:20px;}
+  .score-card{border-radius:16px;padding:20px;text-align:center;border:2px solid;transition:transform .2s;}
+  .score-card:hover{transform:translateY(-3px);}
+  .score-card.gold{border-color:var(--oro);background:rgba(255,215,0,.08);}
+  .score-card.verde{border-color:var(--verde);background:rgba(0,200,83,.08);}
+  .score-card.gray{border-color:var(--gris);background:rgba(136,153,170,.08);}
+  .score-card .pts{font-family:'Bebas Neue';font-size:3.5rem;line-height:1;}
+  .score-card.gold .pts{color:var(--oro);}
+  .score-card.verde .pts{color:var(--verde);}
+  .score-card.gray .pts{color:var(--gris);}
+  .score-card .label{font-weight:800;font-size:.86rem;margin:6px 0 4px;}
+  .score-card .desc{font-size:.76rem;color:var(--gris);}
+  .example-box{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px;margin-bottom:16px;}
+  .example-box h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+  .example-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.87rem;flex-wrap:wrap;}
+  .badge{padding:3px 10px;border-radius:20px;font-weight:800;font-size:.76rem;white-space:nowrap;}
+  .badge.p2{background:var(--oro);color:#000;}
+  .badge.p1{background:var(--verde);color:#000;}
+  .badge.p0{background:var(--gris);color:#fff;}
+
+  .input-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .input-row input{flex:1;min-width:180px;}
+  .participants-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;}
+  .participant-card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;position:relative;}
+  .participant-card .avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+  .participant-card .name{font-weight:800;font-size:.9rem;}
+  .participant-card .pts-count{font-family:'Bebas Neue';font-size:1.6rem;color:var(--verde);line-height:1;}
+  .participant-card .pts-label{font-size:.7rem;color:var(--gris);}
+  .del-btn{position:absolute;top:7px;right:7px;background:none;border:none;color:var(--gris);cursor:pointer;font-size:.93rem;}
+  .del-btn:hover{color:var(--rojo);}
+
+  .partido-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .partido-num{font-family:'Bebas Neue';font-size:.92rem;color:var(--gris);white-space:nowrap;}
+  .partido-teams{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:.93rem;text-align:center;}
+  .team-name{flex:1;}
+  .vs-badge{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:var(--oro);padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:800;white-space:nowrap;}
+  .result-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .result-row label{font-size:.76rem;color:var(--gris);font-weight:700;min-width:105px;}
+  .score-inputs{display:flex;align-items:center;gap:5px;}
+  .score-inputs input{width:48px;padding:7px;text-align:center;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:8px;font-size:1rem;font-weight:800;}
+  .score-inputs span{font-weight:900;color:var(--gris);}
+  .pronos-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+  .prono-tag{display:flex;align-items:center;gap:5px;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:20px;padding:4px 11px;font-size:.76rem;}
+  .prono-tag .pn{font-weight:700;}
+  .prono-tag .ps{font-family:'Bebas Neue';font-size:.92rem;color:var(--oro);}
+  .prono-tag .pp{font-weight:800;border-radius:10px;padding:1px 7px;font-size:.7rem;}
+  .pp2{background:var(--oro);color:#000;}
+  .pp1{background:var(--verde);color:#000;}
+  .pp0{background:rgba(136,153,170,.3);color:var(--gris);}
+  .pp-p{background:rgba(136,153,170,.12);color:var(--gris);}
+  .add-partido-form{background:var(--card);border:1px dashed var(--card-border);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .add-partido-form h3{font-size:.78rem;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+  .form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .form-row input{flex:1;min-width:130px;}
+
+  .select-persona{padding:10px 14px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--texto);font-family:'Nunito';font-size:.88rem;outline:none;cursor:pointer;min-width:160px;}
+  .prono-form{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .prono-form h3{font-family:'Bebas Neue';font-size:1.15rem;letter-spacing:1px;margin-bottom:4px;color:var(--oro);}
+  .prono-partido-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--card-border);flex-wrap:wrap;}
+  .prono-partido-row:last-child{border-bottom:none;}
+  .prono-teams{flex:1;font-weight:800;font-size:.86rem;min-width:150px;}
+  .prono-inputs{display:flex;align-items:center;gap:4px;}
+  .prono-inputs input{width:42px;padding:6px;text-align:center;background:var(--azul-claro);border:1px solid var(--card-border);border-radius:6px;font-size:.93rem;font-weight:800;}
+
+  .ranking-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:18px;margin-bottom:11px;display:flex;align-items:center;gap:14px;transition:all .2s;}
+  .ranking-card:hover{border-color:rgba(0,200,83,.3);transform:translateX(3px);}
+  .ranking-pos{font-family:'Bebas Neue';font-size:2.3rem;color:var(--gris);min-width:38px;text-align:center;}
+  .ranking-pos.pos1{color:var(--oro);}
+  .ranking-pos.pos2{color:#C0C0C0;}
+  .ranking-pos.pos3{color:#CD7F32;}
+  .ranking-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.35rem;}
+  .ranking-info{flex:1;}
+  .ranking-name{font-weight:900;font-size:1rem;}
+  .ranking-detail{font-size:.76rem;color:var(--gris);}
+  .ranking-pts{font-family:'Bebas Neue';font-size:2.1rem;color:var(--verde);text-align:right;}
+  .ranking-pts span{font-family:'Nunito';font-size:.7rem;color:var(--gris);font-weight:700;display:block;line-height:1;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde);color:#000;padding:12px 24px;border-radius:30px;font-weight:800;font-size:.87rem;z-index:1000;transition:transform .3s ease;pointer-events:none;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  @media(max-width:480px){.result-row{flex-direction:column;align-items:flex-start;}}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay"><div class="spinner"></div><p>Conectando con Firebase…</p></div>
+<div id="sync-status" class="synced">● En línea</div>
+
+<header>
+  <div class="trophy">🏆</div>
+  <h1>Quiniela Mundial 2026</h1>
+  <p id="header-sub">¡Que gane el mejor!</p>
+</header>
+
+<div id="deadline-banner" class="none"></div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('reglas',this)">📋 Reglas</button>
+  <button class="tab" onclick="switchTab('participantes',this)">👥 Participantes</button>
+  <button class="tab" onclick="switchTab('partidos',this)">⚽ Partidos</button>
+  <button class="tab" onclick="switchTab('pronosticos',this)">🎯 Pronósticos</button>
+  <button class="tab" onclick="switchTab('marcador',this)">🏅 Marcador</button>
+</div>
+
+<!-- REGLAS -->
+<div id="tab-reglas" class="section active">
+  <div class="rules-hero">
+    <h2>🎯 ¿Cómo se juega?</h2>
+    <p style="color:#ccc;font-size:.91rem;line-height:1.6;">Cada participante predice el marcador de cada partido <strong>antes del deadline</strong>. Según qué tan acertado estés, ganas puntos. Al final, ¡el que más puntos tenga gana!</p>
+  </div>
+  <div class="scoring-cards">
+    <div class="score-card gold"><div class="pts">2</div><div class="label">⭐ Marcador Exacto</div><div class="desc">Acertaste el resultado completo, gol por gol</div></div>
+    <div class="score-card verde"><div class="pts">1</div><div class="label">✅ Resultado Correcto</div><div class="desc">Acertaste quién ganó o que fue empate, pero no el marcador exacto</div></div>
+    <div class="score-card gray"><div class="pts">0</div><div class="label">❌ Sin puntos</div><div class="desc">El resultado no coincidió con tu pronóstico</div></div>
+  </div>
+  <div class="example-box">
+    <h3>📖 Ejemplos</h3>
+    <div class="example-row"><span>Resultado real: <strong>México 2 – 1 Argentina</strong></span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>2-1</strong></span><span class="badge p2">2 PTS ⭐ Exacto</span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>3-0</strong> (México gana)</span><span class="badge p1">1 PTO ✅ Resultado</span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>0-2</strong> (Argentina gana)</span><span class="badge p0">0 PTS ❌</span></div>
+    <hr style="border-color:var(--card-border);margin:12px 0">
+    <div class="example-row"><span>Resultado real: <strong>España 1 – 1 Brasil</strong></span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>1-1</strong></span><span class="badge p2">2 PTS ⭐ Exacto</span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>0-0</strong> (empate también)</span><span class="badge p1">1 PTO ✅ Resultado</span></div>
+    <div class="example-row" style="margin-left:12px"><span>Pronosticaste <strong>2-0</strong> (España gana)</span><span class="badge p0">0 PTS ❌</span></div>
+  </div>
+  <div class="example-box">
+    <h3>📌 Reglas importantes</h3>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.87rem;color:#ccc;">
+      <li>⏰ Los pronósticos deben enviarse <strong>antes del deadline</strong></li>
+      <li>🔒 Los pronósticos son <strong>privados hasta que cierre el deadline</strong></li>
+      <li>✏️ Una vez guardado tu pronóstico, <strong>no se puede cambiar</strong></li>
+      <li>🔢 Solo números enteros (0, 1, 2, 3…)</li>
+      <li>🔐 Solo el <strong>administrador</strong> puede agregar partidos y resultados</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PARTICIPANTES -->
+<div id="tab-participantes" class="section">
+  <div class="section-title">👥 Participantes</div>
+  <div id="admin-lock-p"></div>
+  <div id="add-participant-ui" style="display:none">
+    <div class="input-row">
+      <input type="text" id="new-participant" placeholder="Nombre del participante..." maxlength="20" onkeydown="if(event.key==='Enter')addParticipant()">
+      <button class="btn btn-verde" onclick="addParticipant()">Agregar</button>
+    </div>
+  </div>
+  <div class="participants-grid" id="participants-grid">
+    <div class="empty-state"><div class="emoji">⏳</div><p>Cargando...</p></div>
+  </div>
+</div>
+
+<!-- PARTIDOS -->
+<div id="tab-partidos" class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+    <div class="section-title" style="margin-bottom:0">⚽ Partidos</div>
+    <button class="btn btn-verde btn-sm" id="btn-add-partido" style="display:none" onclick="toggleAddForm()">+ Agregar partido</button>
+  </div>
+  <div id="admin-lock-part"></div>
+  <div id="deadline-admin-panel" style="display:none">
+    <div class="deadline-panel">
+      <h3>⏰ Deadline global de pronósticos</h3>
+      <p style="font-size:.79rem;color:var(--gris);">Fecha y hora límite. Después de esta hora los pronósticos se revelan a todos.</p>
+      <div class="deadline-row">
+        <input type="datetime-local" id="deadline-input">
+        <button class="btn btn-verde btn-sm" onclick="saveDeadline()">Guardar</button>
+        <button class="btn btn-warn btn-sm" onclick="clearDeadline()">Quitar</button>
+      </div>
+      <div class="deadline-current" id="deadline-current-txt"></div>
+    </div>
+  </div>
+  <div class="add-partido-form" id="add-partido-form" style="display:none">
+    <h3>➕ Nuevo partido</h3>
+    <div class="form-row">
+      <input type="text" id="new-local" placeholder="Equipo local (ej: México)" maxlength="25">
+      <input type="text" id="new-visita" placeholder="Equipo visitante (ej: Argentina)" maxlength="25">
+    </div>
+    <div class="form-row">
+      <input type="text" id="new-fecha" placeholder="Fecha (ej: Jue 12 Jun, 3pm)">
+      <button class="btn btn-verde" onclick="addPartido()">Guardar</button>
+    </div>
+  </div>
+  <div id="partidos-list"></div>
+  <div class="empty-state" id="no-partidos"><div class="emoji">⚽</div><p>Aún no hay partidos registrados</p></div>
+</div>
+
+<!-- PRONÓSTICOS -->
+<div id="tab-pronosticos" class="section">
+  <div class="section-title">🎯 Pronósticos</div>
+  <div class="info-box" id="prono-info-box"><strong>💡 ¿Cómo funciona?</strong><br>Selecciona tu nombre, escribe tu pronóstico y presiona <strong>Guardar</strong>. ¡Solo puedes hacerlo una vez!</div>
+  <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <label style="font-size:.87rem;color:var(--gris);font-weight:700;">Soy:</label>
+    <select class="select-persona" id="prono-persona" onchange="renderPronosForm()"><option value="">— Selecciona tu nombre —</option></select>
+  </div>
+  <div id="prono-form-container"><div class="empty-state"><div class="emoji">🎯</div><p>Selecciona tu nombre arriba</p></div></div>
+</div>
+
+<!-- MARCADOR -->
+<div id="tab-marcador" class="section">
+  <div class="section-title">🏅 Marcador General</div>
+  <div id="ranking-list"></div>
+  <div class="empty-state" id="no-ranking"><div class="emoji">🏅</div><p>Aún no hay puntos registrados</p></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ══════════════════════════════════════════
+// FIREBASE CONFIG — tus credenciales
+// ══════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDTIjCbIhyNMws3GkXIfWm1fAV1strp3cU",
+  authDomain: "quiniela-mundial-jimenez-2026.firebaseapp.com",
+  databaseURL: "https://quiniela-mundial-jimenez-2026-default-rtdb.firebaseio.com",
+  projectId: "quiniela-mundial-jimenez-2026",
+  storageBucket: "quiniela-mundial-jimenez-2026.firebasestorage.app",
+  messagingSenderId: "595305024102",
+  appId: "1:595305024102:web:e7d58a2cea71ac3c543ba7",
+  measurementId: "G-T3JPTGYZZ0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ══════════════════════════════════════════
+// STATE LOCAL (espejo de Firebase)
+// ══════════════════════════════════════════
+const ADMIN_PASS = 'gol2026';
+let state = { participants:[], partidos:[], pronosticos:{}, deadline:null };
+let isAdmin = false;
+
+// Admin session en localStorage (solo para esta sesión/dispositivo)
+function checkAdminSession(){ isAdmin = localStorage.getItem('quiniela-admin')==='1'; }
+function setAdminSession(v){ localStorage.setItem('quiniela-admin', v?'1':'0'); isAdmin=v; }
+
+// ══════════════════════════════════════════
+// FIREBASE LISTENERS — escucha cambios en tiempo real
+// ══════════════════════════════════════════
+function initListeners(){
+  onValue(ref(db,'quiniela'), snap => {
+    const data = snap.val() || {};
+    state.participants = data.participants ? Object.values(data.participants) : [];
+    state.partidos     = data.partidos     ? Object.values(data.partidos)     : [];
+    state.pronosticos  = data.pronosticos  || {};
+    state.deadline     = data.deadline     || null;
+    setSyncStatus('synced');
+    renderDeadlineBanner();
+    renderCurrentTab();
+    document.getElementById('loading-overlay').style.display='none';
+  }, err => {
+    setSyncStatus('error');
+    console.error(err);
+    document.getElementById('loading-overlay').style.display='none';
+  });
+}
+
+// ══════════════════════════════════════════
+// FIREBASE WRITE HELPERS
+// ══════════════════════════════════════════
+async function fbSet(path, value){
+  setSyncStatus('syncing');
+  await set(ref(db, path), value);
+}
+async function fbUpdate(path, value){
+  setSyncStatus('syncing');
+  await update(ref(db, path), value);
+}
+async function fbRemove(path){
+  setSyncStatus('syncing');
+  await remove(ref(db, path));
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+const COLORS=['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#00ACC1','#F4511E','#6D4C41','#00897B','#C0CA33'];
+const EMOJIS=['🦁','⭐','🦅','🐯','🦊','🐝','🦋','🌟','🔥','💫'];
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+function setSyncStatus(s){ const el=document.getElementById('sync-status'); if(s==='syncing'){el.className='syncing';el.textContent='⟳ Guardando...';}else if(s==='error'){el.className='error';el.textContent='⚠ Sin conexión';}else{el.className='synced';el.textContent='● En línea';} }
+
+function calcPts(pL,pV,rL,rV){
+  if(rL==null||rV==null) return null;
+  if(pL===rL&&pV===rV) return 2;
+  const pr=pL>pV?'L':pL<pV?'V':'E', rr=rL>rV?'L':rL<rV?'V':'E';
+  return pr===rr?1:0;
+}
+function calcTotal(name){
+  let t=0;
+  state.partidos.forEach(p=>{ if(p.resultLocal==null) return; const pr=(state.pronosticos[p.id]||{})[name]; if(pr) t+=calcPts(pr.local,pr.visita,p.resultLocal,p.resultVisita)||0; });
+  return t;
+}
+
+function deadlinePassed(){ return state.deadline?new Date()>new Date(state.deadline):false; }
+function deadlineFmt(){ if(!state.deadline) return null; return new Date(state.deadline).toLocaleString('es-MX',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}); }
+
+// ══════════════════════════════════════════
+// DEADLINE BANNER
+// ══════════════════════════════════════════
+function renderDeadlineBanner(){
+  const el=document.getElementById('deadline-banner');
+  if(!state.deadline){el.className='none';return;}
+  if(deadlinePassed()){el.className='closed';el.textContent='🔒 Deadline cerrado — Los pronósticos ya son visibles para todos';}
+  else{el.className='open';el.textContent='⏰ Deadline: '+deadlineFmt()+' — Los pronósticos son privados hasta entonces';}
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+let currentTab='reglas';
+window.switchTab=function(tab,el){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  renderCurrentTab();
+};
+function renderCurrentTab(){
+  if(currentTab==='participantes') renderParticipants();
+  if(currentTab==='partidos') renderPartidos();
+  if(currentTab==='pronosticos'){updatePronoSelect();renderPronosForm();}
+  if(currentTab==='marcador') renderRanking();
+}
+
+// ══════════════════════════════════════════
+// ADMIN LOCK
+// ══════════════════════════════════════════
+function renderAdminLock(containerId, onUnlock){
+  const el=document.getElementById(containerId); if(!el) return;
+  if(isAdmin){el.innerHTML='';onUnlock();return;}
+  el.innerHTML=`<div id="admin-lock-inner">
+    <h3>🔐 Solo administrador</h3>
+    <p style="font-size:.78rem;color:var(--gris);margin-bottom:10px;">Ingresa la contraseña para hacer cambios.</p>
+    <div class="lock-row">
+      <input type="password" id="apw-${containerId}" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')window.tryLogin('${containerId}')">
+      <button class="btn btn-verde btn-sm" onclick="window.tryLogin('${containerId}')">Entrar</button>
+    </div>
+  </div>`;
+}
+window.tryLogin=function(cid){
+  const pw=document.getElementById('apw-'+cid)?.value||'';
+  if(pw===ADMIN_PASS){ setAdminSession(true); toast('✅ Modo administrador activado'); document.getElementById('header-sub').innerHTML='¡Que gane el mejor! <span class="admin-badge">🔐 Admin</span>'; renderCurrentTab(); }
+  else toast('❌ Contraseña incorrecta');
+};
+
+// ══════════════════════════════════════════
+// DEADLINE ADMIN
+// ══════════════════════════════════════════
+window.saveDeadline=async function(){
+  const val=document.getElementById('deadline-input').value;
+  if(!val){toast('⚠️ Selecciona fecha y hora');return;}
+  await fbSet('quiniela/deadline', new Date(val).toISOString());
+  toast('✅ Deadline guardado');
+};
+window.clearDeadline=async function(){
+  if(!confirm('¿Quitar el deadline?')) return;
+  await fbRemove('quiniela/deadline');
+  toast('⚠️ Deadline eliminado');
+};
+function renderDeadlinePanel(){
+  const panel=document.getElementById('deadline-admin-panel');
+  if(!isAdmin){panel.style.display='none';return;}
+  panel.style.display='block';
+  const inp=document.getElementById('deadline-input');
+  if(state.deadline&&!inp.value){ const d=new Date(state.deadline); inp.value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+  const txt=document.getElementById('deadline-current-txt');
+  if(state.deadline){ const p=deadlinePassed(); txt.innerHTML=`Actual: <strong>${deadlineFmt()}</strong> — <span style="color:${p?'var(--rojo)':'var(--verde)'}">${p?'🔒 Cerrado':'🟢 Abierto'}</span>`; }
+  else txt.textContent='Sin deadline — los pronósticos siempre son visibles.';
+}
+
+// ══════════════════════════════════════════
+// PARTICIPANTES
+// ══════════════════════════════════════════
+function renderParticipants(){
+  renderAdminLock('admin-lock-p',()=>{document.getElementById('add-participant-ui').style.display='block';});
+  if(!isAdmin) document.getElementById('add-participant-ui').style.display='none';
+  const grid=document.getElementById('participants-grid');
+  if(!state.participants.length){grid.innerHTML=`<div class="empty-state"><div class="emoji">👥</div><p>Agrega participantes arriba</p></div>`;return;}
+  grid.innerHTML=state.participants.map(p=>`<div class="participant-card">
+    ${isAdmin?`<button class="del-btn" onclick="window.removeParticipant('${p.id}')">✕</button>`:''}
+    <div class="avatar" style="background:${p.color}22;border:2px solid ${p.color}">${p.emoji}</div>
+    <div class="name">${p.name}</div>
+    <div class="pts-count">${calcTotal(p.name)}</div>
+    <div class="pts-label">puntos</div>
+  </div>`).join('');
+}
+window.addParticipant=async function(){
+  const inp=document.getElementById('new-participant'); const name=inp.value.trim(); if(!name) return;
+  if(state.participants.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('⚠️ Ya existe ese nombre');return;}
+  const idx=state.participants.length;
+  const id='p'+Date.now();
+  await fbSet(`quiniela/participants/${id}`,{id,name,color:COLORS[idx%COLORS.length],emoji:EMOJIS[idx%EMOJIS.length]});
+  inp.value=''; toast('✅ '+name+' agregado');
+};
+window.removeParticipant=async function(id){
+  if(!confirm('¿Eliminar este participante?')) return;
+  await fbRemove(`quiniela/participants/${id}`);
+};
+
+// ══════════════════════════════════════════
+// PARTIDOS
+// ══════════════════════════════════════════
+function renderPartidos(){
+  renderAdminLock('admin-lock-part',()=>{document.getElementById('btn-add-partido').style.display='inline-flex';renderDeadlinePanel();});
+  if(!isAdmin){document.getElementById('btn-add-partido').style.display='none';document.getElementById('deadline-admin-panel').style.display='none';}
+  const list=document.getElementById('partidos-list');
+  const empty=document.getElementById('no-partidos');
+  const passed=deadlinePassed();
+  const canSeeAll=isAdmin||passed;
+  if(!state.partidos.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=state.partidos.map((p,i)=>{
+    const hasResult=p.resultLocal!=null;
+    let pronosHtml='';
+    if(state.participants.length){
+      if(canSeeAll){
+        const tags=state.participants.map(part=>{
+          const prono=(state.pronosticos[p.id]||{})[part.name];
+          if(!prono) return `<div class="prono-tag"><span class="pn">${part.name}</span><span class="pp pp-p">—</span></div>`;
+          const pts=calcPts(prono.local,prono.visita,p.resultLocal,p.resultVisita);
+          const pc=pts===2?'pp2':pts===1?'pp1':pts===0?'pp0':'pp-p';
+          const pl=pts===null?'⏳':pts===2?'⭐2':pts===1?'✅1':'❌0';
+          return `<div class="prono-tag"><span class="pn">${part.name}</span><span class="ps">${prono.local}-${prono.visita}</span><span class="pp ${pc}">${pl}</span></div>`;
+        }).join('');
+        pronosHtml=`<div><div style="font-size:.72rem;color:var(--gris);font-weight:700;margin-bottom:5px">PRONÓSTICOS:</div><div class="pronos-grid">${tags}</div></div>`;
+      } else {
+        const count=state.participants.filter(part=>{const pr=(state.pronosticos[p.id]||{})[part.name];return pr&&pr.local!==undefined;}).length;
+        pronosHtml=`<div class="privacy-shield"><span style="font-size:1.5rem">🔒</span><p>${count} de ${state.participants.length} participante${state.participants.length!==1?'s':''} ya ${count===1?'metió':'metieron'} su pronóstico.<br>Se revelarán cuando cierre el deadline.</p></div>`;
+      }
+    }
+    const adminResult=isAdmin
+      ?`<div class="result-row"><label>📊 Resultado real:</label><div class="score-inputs"><input type="number" id="rl-${p.id}" min="0" max="99" value="${hasResult?p.resultLocal:''}" placeholder="–"><span>–</span><input type="number" id="rv-${p.id}" min="0" max="99" value="${hasResult?p.resultVisita:''}" placeholder="–"></div><button class="btn btn-verde btn-sm" onclick="window.saveResult('${p.id}')">💾</button>${hasResult?`<span style="color:var(--verde);font-weight:800;font-size:.79rem">✅ ${p.resultLocal}–${p.resultVisita}</span>`:''}</div>`
+      :(hasResult?`<div style="margin-bottom:10px;font-size:.86rem;color:var(--verde);font-weight:800">📊 Resultado: ${p.resultLocal} – ${p.resultVisita}</div>`:`<div style="margin-bottom:10px;font-size:.79rem;color:var(--gris)">⏳ Resultado pendiente</div>`);
+    return `<div class="card"><div class="partido-top"><span class="partido-num">Partido ${i+1}${p.fecha?' · '+p.fecha:''}</span><div class="partido-teams"><span class="team-name">🏠 ${p.local}</span><span class="vs-badge">VS</span><span class="team-name">${p.visita} ✈️</span></div>${isAdmin?`<button class="btn btn-rojo btn-sm" onclick="window.removePartido('${p.id}')">✕</button>`:''}</div>${adminResult}${pronosHtml}</div>`;
+  }).join('');
+}
+
+window.toggleAddForm=function(){ const f=document.getElementById('add-partido-form'); f.style.display=f.style.display==='none'?'block':'none'; };
+
+window.addPartido=async function(){
+  const local=document.getElementById('new-local').value.trim();
+  const visita=document.getElementById('new-visita').value.trim();
+  const fecha=document.getElementById('new-fecha').value.trim();
+  if(!local||!visita){toast('⚠️ Escribe los dos equipos');return;}
+  const id='m'+Date.now();
+  await fbSet(`quiniela/partidos/${id}`,{id,local,visita,fecha,resultLocal:null,resultVisita:null});
+  document.getElementById('new-local').value='';
+  document.getElementById('new-visita').value='';
+  document.getElementById('new-fecha').value='';
+  document.getElementById('add-partido-form').style.display='none';
+  toast('⚽ Partido agregado');
+};
+window.removePartido=async function(id){
+  if(!confirm('¿Eliminar este partido?')) return;
+  await fbRemove(`quiniela/partidos/${id}`);
+  await fbRemove(`quiniela/pronosticos/${id}`);
+};
+window.saveResult=async function(id){
+  const rl=document.getElementById('rl-'+id).value, rv=document.getElementById('rv-'+id).value;
+  if(rl===''||rv===''){toast('⚠️ Escribe ambos goles');return;}
+  await fbUpdate(`quiniela/partidos/${id}`,{resultLocal:parseInt(rl),resultVisita:parseInt(rv)});
+  toast('✅ Resultado guardado');
+};
+
+// ══════════════════════════════════════════
+// PRONÓSTICOS
+// ══════════════════════════════════════════
+function updatePronoSelect(){
+  const sel=document.getElementById('prono-persona'); const val=sel.value;
+  sel.innerHTML='<option value="">— Selecciona tu nombre —</option>'+state.participants.map(p=>`<option value="${p.name}" ${p.name===val?'selected':''}>${p.emoji} ${p.name}</option>`).join('');
+  if(val) sel.value=val;
+}
+function renderPronosForm(){
+  const persona=document.getElementById('prono-persona').value;
+  const cont=document.getElementById('prono-form-container');
+  const passed=deadlinePassed();
+  const ib=document.getElementById('prono-info-box');
+  if(passed){ ib.innerHTML=`<strong style="color:var(--rojo)">🔒 Deadline cerrado.</strong> Ya no se pueden ingresar pronósticos.`; ib.style.background='rgba(229,57,53,.07)'; ib.style.borderColor='rgba(229,57,53,.25)'; }
+  else if(state.deadline){ ib.innerHTML=`<strong>⏰ Deadline: ${deadlineFmt()}</strong><br>Mete tus pronósticos antes de esa hora.`; ib.style.background=''; ib.style.borderColor=''; }
+  else { ib.innerHTML=`<strong>💡 Sin deadline configurado.</strong> Puedes meter tus pronósticos cuando quieras.`; ib.style.background=''; ib.style.borderColor=''; }
+  if(!persona){cont.innerHTML=`<div class="empty-state"><div class="emoji">🎯</div><p>Selecciona tu nombre arriba</p></div>`;return;}
+  if(!state.partidos.length){cont.innerHTML=`<div class="empty-state"><div class="emoji">⚽</div><p>Aún no hay partidos registrados</p></div>`;return;}
+  const rows=state.partidos.map(p=>{
+    const prono=(state.pronosticos[p.id]||{})[persona]||{};
+    const locked=prono.local!==undefined;
+    const cantAdd=passed&&!locked;
+    const hasResult=p.resultLocal!=null;
+    const pts=locked?calcPts(prono.local,prono.visita,p.resultLocal,p.resultVisita):null;
+    const ptsTag=pts===2?'<span class="badge p2">⭐ 2 pts</span>':pts===1?'<span class="badge p1">✅ 1 pto</span>':pts===0?'<span class="badge p0">❌ 0 pts</span>':'';
+    return `<div class="prono-partido-row"><div class="prono-teams">⚽ ${p.local} vs ${p.visita}${p.fecha?`<br><span style="font-size:.7rem;color:var(--gris)">${p.fecha}</span>`:''}</div><div class="prono-inputs"><input type="number" min="0" max="99" id="pi-${p.id}-l" value="${locked?prono.local:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}><span style="color:var(--gris);font-weight:900">–</span><input type="number" min="0" max="99" id="pi-${p.id}-v" value="${locked?prono.visita:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}></div>${locked?ptsTag:''}${cantAdd?'<span style="font-size:.7rem;color:var(--rojo);font-weight:700">⏰ Cerrado</span>':''}${locked&&!hasResult?'<span style="font-size:.7rem;color:var(--gris)">⏳ esperando resultado</span>':''}</div>`;
+  }).join('');
+  const allLocked=state.partidos.every(p=>{const pr=(state.pronosticos[p.id]||{})[persona];return pr&&pr.local!==undefined;});
+  const showSave=!passed&&!allLocked;
+  cont.innerHTML=`<div class="prono-form"><h3>${persona}</h3><p style="font-size:.75rem;color:var(--gris);margin-bottom:12px">Una vez guardado no se puede cambiar.</p>${rows}${showSave?`<div style="margin-top:16px;text-align:right"><button class="btn btn-verde" onclick="window.savePronosticos('${persona}')">💾 Guardar pronósticos</button></div>`:''}${allLocked?`<div style="margin-top:14px;text-align:center;font-size:.83rem;color:var(--verde);font-weight:800">✅ Todos tus pronósticos están guardados</div>`:''}${passed&&!allLocked?`<div style="margin-top:14px;text-align:center;font-size:.83rem;color:var(--rojo);font-weight:800">🔒 El deadline cerró</div>`:''}</div>`;
+}
+window.savePronosticos=async function(persona){
+  if(deadlinePassed()){toast('⏰ El deadline ya cerró');return;}
+  let count=0;
+  const updates={};
+  state.partidos.forEach(p=>{
+    if((state.pronosticos[p.id]||{})[persona]?.local!==undefined) return;
+    const lv=document.getElementById('pi-'+p.id+'-l')?.value.trim();
+    const vv=document.getElementById('pi-'+p.id+'-v')?.value.trim();
+    if(lv!=null&&vv!=null&&lv!==''&&vv!==''){
+      updates[`quiniela/pronosticos/${p.id}/${persona}`]={local:parseInt(lv),visita:parseInt(vv)};
+      count++;
+    }
+  });
+  if(!count){toast('⚠️ No hay pronósticos nuevos');return;}
+  await update(ref(db),updates);
+  toast('✅ '+count+' pronóstico'+(count>1?'s':'')+' guardado'+(count>1?'s':''));
+};
+
+// ══════════════════════════════════════════
+// RANKING
+// ══════════════════════════════════════════
+function renderRanking(){
+  const list=document.getElementById('ranking-list'); const empty=document.getElementById('no-ranking');
+  if(!state.participants.length){list.innerHTML='';empty.style.display='block';return;}
+  const ranked=state.participants.map(p=>({...p,pts:calcTotal(p.name)})).sort((a,b)=>b.pts-a.pts);
+  const jugados=state.partidos.filter(p=>p.resultLocal!=null).length;
+  empty.style.display='none';
+  list.innerHTML=ranked.map((p,i)=>{
+    const pos=i+1,pc=pos===1?'pos1':pos===2?'pos2':pos===3?'pos3':'';
+    const medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':pos;
+    return `<div class="ranking-card"><div class="ranking-pos ${pc}">${medal}</div><div class="ranking-avatar" style="background:${p.color}22;border:2px solid ${p.color}">${p.emoji}</div><div class="ranking-info"><div class="ranking-name">${p.name}</div><div class="ranking-detail">${jugados} partido${jugados!==1?'s':''} jugado${jugados!==1?'s':''}</div></div><div class="ranking-pts">${p.pts}<span>puntos</span></div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+checkAdminSession();
+if(isAdmin) document.getElementById('header-sub').innerHTML='¡Que gane el mejor! <span class="admin-badge">🔐 Admin</span>';
+initListeners();
+</script>
+</body>
+</html>
