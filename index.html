@@ -315,7 +315,7 @@ select.sel:focus{border-color:var(--v);}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const FC={apiKey:"AIzaSyDTIjCbIhyNMws3GkXIfWm1fAV1strp3cU",authDomain:"quiniela-mundial-jimenez-2026.firebaseapp.com",databaseURL:"https://quiniela-mundial-jimenez-2026-default-rtdb.firebaseio.com",projectId:"quiniela-mundial-jimenez-2026",storageBucket:"quiniela-mundial-jimenez-2026.firebasestorage.app",messagingSenderId:"595305024102",appId:"1:595305024102:web:e7d58a2cea71ac3c543ba7"};
 const app=initializeApp(FC);
@@ -535,7 +535,7 @@ async function fbUpdate(path,val){setSS('sy');await update(ref(db,path),val);}
 async function fbRemove(path){setSS('sy');await remove(ref(db,path));}
 
 async function ensurePartidos(){
-  const snap=await new Promise(r=>{const u=onValue(ref(db,'quiniela/partidos'),s=>{u();r(s);});});
+  const snap=await get(ref(db,'quiniela/partidos'));
   if(!snap.val()){
     const obj={};
     PARTIDOS_GRUPOS.forEach(p=>{obj[p.id]={...p,ronda:'grupos',resultLocal:null,resultVisita:null};});
