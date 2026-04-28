@@ -1118,8 +1118,12 @@ function renderRanking(){
 
 checkAdmin();
 if(isAdmin) document.getElementById('hsub').innerHTML='¡Que gane el mejor! <span class="abadge">🔐 Admin</span>';
-await ensurePartidos();
-initListeners();
+ensurePartidos().then(()=>{
+  initListeners();
+}).catch(e=>{
+  console.error('Error ensurePartidos:', e);
+  initListeners();
+});
 </script>
 </body>
 </html>
