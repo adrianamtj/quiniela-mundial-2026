@@ -884,7 +884,7 @@ function updateSels(){
   });
 }
 
-function renderPF(){
+window.renderPF = function(){
   const persona=document.getElementById('ppsel').value;
   const cont=document.getElementById('pfc');
   const passed=dlPassed();
@@ -936,7 +936,7 @@ window.savePronos=async function(persona){
   toast('✅ '+count+' pronóstico'+(count>1?'s':'')+' guardado'+(count>1?'s':''));
 };
 
-function renderCF(){
+ window.renderCF = function(){
   const persona=document.getElementById('cpsel').value;
   const cont=document.getElementById('cfc');
   const passed=dlPassed();
