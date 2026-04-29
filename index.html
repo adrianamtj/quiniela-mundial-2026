@@ -118,8 +118,6 @@ select.sel:focus{border-color:var(--v);}
 .bracket-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px;}
 .bg{background:var(--c);border:1px solid var(--cb);border-radius:11px;padding:12px;}
 .bg h4{font-size:.77rem;color:var(--o);font-weight:800;margin-bottom:8px;font-family:'Bebas Neue';letter-spacing:1px;}
-.bg select{width:100%;padding:7px 10px;background:var(--a2);border:1px solid var(--cb);border-radius:7px;color:var(--t);font-family:'Nunito';font-size:.78rem;outline:none;margin-bottom:5px;}
-.bg select:focus{border-color:var(--v);}
 .team-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:.79rem;}
 .team-row .pts-cl{font-weight:800;font-size:.72rem;}
 .sim-panel{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);border-radius:14px;padding:16px;margin-bottom:16px;}
@@ -172,6 +170,14 @@ select.sel:focus{border-color:var(--v);}
 .frow input,.frow select{flex:1;min-width:120px;}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--v);color:#000;padding:11px 22px;border-radius:28px;font-weight:800;font-size:.84rem;z-index:1000;transition:transform .3s;pointer-events:none;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
+/* Clasificados bracket personal */
+.cls-bracket{background:var(--c);border:1px solid var(--cb);border-radius:13px;padding:14px;margin-bottom:10px;}
+.cls-bracket h4{font-family:'Bebas Neue';font-size:1rem;color:var(--o);letter-spacing:1px;margin-bottom:8px;}
+.cls-round{margin-bottom:10px;}
+.cls-round-title{font-size:.72rem;color:var(--g);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.cls-match{display:flex;align-items:center;gap:6px;font-size:.8rem;margin-bottom:4px;flex-wrap:wrap;}
+.cls-winner{color:var(--v);font-weight:800;}
+.cls-loser{color:var(--g);}
 @media(max-width:480px){.rr{flex-direction:column;align-items:flex-start;}}
 </style>
 </head>
@@ -198,7 +204,7 @@ select.sel:focus{border-color:var(--v);}
 <div id="tab-reglas" class="sec active">
   <div class="rh">
     <h2>🎯 ¿Cómo se juega?</h2>
-    <p style="color:#ccc;font-size:.88rem;line-height:1.6;">Pronostica los 72 marcadores de grupos <strong>y</strong> selecciona 2 clasificados por grupo. El sistema simula automáticamente todo el torneo según tus pronósticos y suma puntos conforme los equipos avanzan de ronda.</p>
+    <p style="color:#ccc;font-size:.88rem;line-height:1.6;">Pronostica los 72 marcadores de grupos. El sistema simula automáticamente todo el torneo según tus pronósticos y suma puntos conforme los equipos avanzan de ronda.</p>
   </div>
   <div class="scards">
     <div class="sc sg"><div class="p">2</div><div class="lb">⭐ Marcador Exacto</div><div class="dc">Gol por gol</div></div>
@@ -207,7 +213,7 @@ select.sel:focus{border-color:var(--v);}
   </div>
   <div class="ebox">
     <h3>🏅 Puntos por Clasificados (automáticos)</h3>
-    <p style="font-size:.81rem;color:#ccc;margin-bottom:10px;line-height:1.5;">Seleccionas 2 equipos por grupo. El sistema calcula automáticamente quién clasifica según tus marcadores pronosticados, simulando tablas de posición, mejores terceros (FIFA) y bracket completo.</p>
+    <p style="font-size:.81rem;color:#ccc;margin-bottom:10px;line-height:1.5;">El sistema calcula automáticamente quién clasifica según tus marcadores pronosticados, simulando tablas de posición, mejores terceros (FIFA) y bracket completo.</p>
     <table class="pts-table">
       <tr><th>Logro</th><th>Puntos</th></tr>
       <tr><td>✅ Pasa de grupos (clasifica)</td><td>+1 pt</td></tr>
@@ -226,17 +232,17 @@ select.sel:focus{border-color:var(--v);}
       <li>🥉 Los 12 terceros lugares se ordenan según criterios FIFA para elegir los 8 mejores</li>
       <li>🗂️ Se aplica la tabla oficial de FIFA con las 495 combinaciones posibles para definir los cruces de dieciseisavos</li>
       <li>🏟️ El bracket se simula ronda a ronda según tus marcadores pronosticados</li>
-      <li>⚡ Todo es automático — solo necesitas meter tus 72 marcadores y elegir 2 clasificados por grupo</li>
+      <li>⚡ Todo es automático — solo necesitas meter tus 72 marcadores</li>
     </ul>
   </div>
   <div class="ebox">
     <h3>📌 Reglas importantes</h3>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.83rem;color:#ccc;">
       <li>⏰ Todo se mete <strong>antes del deadline</strong></li>
-      <li>🔒 Pronósticos y clasificados son <strong>privados hasta que cierre el deadline</strong></li>
+      <li>🔒 Pronósticos son <strong>privados hasta que cierre el deadline</strong></li>
       <li>✏️ Una vez guardado no se puede cambiar</li>
       <li>🔐 Solo el <strong>admin</strong> agrega resultados reales y tarjetas</li>
-      <li>🃏 En caso de empate en Fair Play: el sistema usa el ranking FIFA (no sorteo, para simplificar)</li>
+      <li>🃏 En caso de empate en Fair Play: el sistema usa el ranking FIFA</li>
     </ul>
   </div>
 </div>
@@ -244,13 +250,15 @@ select.sel:focus{border-color:var(--v);}
 <!-- JUGADORES -->
 <div id="tab-jugadores" class="sec">
   <div class="stitle">👥 Jugadores</div>
-  <div id="alp"></div>
-  <div id="apui" style="display:none">
-    <div style="display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap;">
-      <input type="text" id="npa" placeholder="Nombre..." maxlength="20" onkeydown="if(event.key==='Enter')window.addP()" style="flex:1;min-width:170px;">
-      <button class="btn bv" onclick="window.addP()">Agregar</button>
+  <div class="dpanel" style="margin-bottom:16px">
+    <h3>✍️ Únete a la quiniela</h3>
+    <p style="font-size:.77rem;color:var(--g);margin-bottom:9px">Escribe tu nombre para registrarte. Solo una vez.</p>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;">
+      <input type="text" id="npa" placeholder="Tu nombre..." maxlength="20" onkeydown="if(event.key==='Enter')window.addP()" style="flex:1;min-width:170px;">
+      <button class="btn bv" onclick="window.addP()">Unirme 🙋</button>
     </div>
   </div>
+  <div id="alp"></div>
   <div class="pgrid" id="pgrid"><div class="empty"><div class="ei">⏳</div><p>Cargando...</p></div></div>
 </div>
 
@@ -281,26 +289,26 @@ select.sel:focus{border-color:var(--v);}
   <div class="ibox" id="pibox"><strong>💡 Ingresa tus 72 marcadores</strong><br>El sistema calculará automáticamente quién clasifica según tus pronósticos.</div>
   <div style="margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
     <label style="font-size:.84rem;color:var(--g);font-weight:700;">Soy:</label>
-    <select class="spsel" id="ppsel" onchange="renderPF()"><option value="">— Selecciona tu nombre —</option></select>
+    <select class="spsel" id="ppsel" onchange="window.renderPF()"><option value="">— Selecciona tu nombre —</option></select>
   </div>
   <div id="pfc"><div class="empty"><div class="ei">🎯</div><p>Selecciona tu nombre</p></div></div>
 </div>
 
-<!-- CLASIFICADOS -->
+<!-- CLASIFICADOS — bracket simulado desde marcadores -->
 <div id="tab-clasificados" class="sec">
-  <div class="stitle">🏅 Mis Clasificados</div>
-  <div class="ibox" id="cibox"><strong>💡 Selecciona 2 equipos por grupo</strong><br>Elige quiénes crees que clasificarán. El sistema también simula tu bracket completo automáticamente desde tus marcadores — estos son tus picks adicionales.</div>
+  <div class="stitle">🏅 Clasificados</div>
+  <div class="ibox"><strong>🔮 Bracket simulado desde tus marcadores</strong><br>Aquí ves quién clasifica y avanza según tus pronósticos. Los puntos se calculan automáticamente comparando contra los resultados reales.</div>
   <div style="margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
-    <label style="font-size:.84rem;color:var(--g);font-weight:700;">Soy:</label>
-    <select class="spsel" id="cpsel" onchange="renderCF()"><option value="">— Selecciona tu nombre —</option></select>
+    <label style="font-size:.84rem;color:var(--g);font-weight:700;">Ver bracket de:</label>
+    <select class="spsel" id="cpsel" onchange="window.renderCF()"><option value="">— Selecciona un jugador —</option></select>
   </div>
-  <div id="cfc"><div class="empty"><div class="ei">🏅</div><p>Selecciona tu nombre</p></div></div>
+  <div id="cfc"><div class="empty"><div class="ei">🏅</div><p>Selecciona un jugador para ver su bracket</p></div></div>
 </div>
 
 <!-- SIMULACIÓN -->
 <div id="tab-simulacion" class="sec">
   <div class="stitle">🔢 Simulación del Torneo</div>
-  <div class="ibox"><strong>📊 ¿Qué muestra esto?</strong><br>Esta sección muestra las tablas de posición de cada grupo y el bracket eliminatorio basados en los <strong>resultados reales</strong> ingresados por el admin. Conforme avanza el torneo, se actualiza automáticamente.</div>
+  <div class="ibox"><strong>📊 ¿Qué muestra esto?</strong><br>Esta sección muestra las tablas de posición de cada grupo y el bracket eliminatorio basados en los <strong>resultados reales</strong> ingresados por el admin.</div>
   <div id="sim-content"><div class="empty"><div class="ei">⏳</div><p>Cargando simulación...</p></div></div>
 </div>
 
@@ -412,7 +420,6 @@ const PARTIDOS_GRUPOS=[
 ];
 
 const FIFA_R32_TABLE = {
-  'DEFGHIKL':['3E','3J','3I','3F','3H','3G','3L','3K'],
   'EFGHIJKL':['3E','3J','3I','3F','3H','3G','3L','3K'],
   'DFGHIJKL':['3H','3G','3I','3D','3J','3F','3L','3K'],
   'DEGHIJKL':['3E','3J','3I','3D','3H','3G','3L','3K'],
@@ -491,10 +498,7 @@ const SF_BRACKET = [
 ];
 
 const FINAL = {id:'m103',s1:'m101',s2:'m102'};
-
 const RONDA_PTS={32:2,16:3,8:4,4:5,2:6};
-const RONDA_LABELS={grupos:'Grupos',32:'Dieciseisavos',16:'Octavos',8:'Cuartos',4:'Semifinal',2:'Final'};
-const RONDA_CLASS={32:'r32',16:'r16',8:'r8',4:'r4',2:'r2',1:'r1'};
 
 const FIFA_RANK={
   'Francia':2,'Argentina':1,'España':3,'Brasil':5,'Inglaterra':4,'Portugal':6,'Países Bajos':7,
@@ -503,12 +507,11 @@ const FIFA_RANK={
   'Noruega':25,'Austria':26,'Australia':23,'Turquía':27,'Egipto':35,'Costa de Marfil':34,
   'Suecia':24,'Escocia':39,'Argelia':30,'Ghana':60,'Jordania':67,'Haití':83,'RD Congo':55,
   'Uzbekistán':74,'Bosnia-Herz.':56,'Irak':66,'Arabia Saudita':56,'Rep. Checa':35,'Sudáfrica':65,
-  'Panamá':77,'Nueva Zelanda':99,'Qatar':58,'Túnez':33,'Irán':21,'Cabo Verde':80,
-  'Curazao':85,'Paraguay':30,
+  'Panamá':77,'Nueva Zelanda':99,'Qatar':58,'Túnez':33,'Irán':21,'Cabo Verde':80,'Curazao':85,
 };
 
 const ADMIN_PASS='gol2026';
-let S={participants:[],partidos:[],pronosticos:{},clasificados:{},fairplay:{},deadline:null};
+let S={participants:[],partidos:[],pronosticos:{},fairplay:{},deadline:null};
 let isAdmin=false;
 
 function checkAdmin(){isAdmin=localStorage.getItem('qa')==='1';}
@@ -519,7 +522,6 @@ function initListeners(){
     const d=snap.val()||{};
     S.participants=d.participants?Object.values(d.participants):[];
     S.pronosticos=d.pronosticos||{};
-    S.clasificados=d.clasificados||{};
     S.fairplay=d.fairplay||{};
     S.deadline=d.deadline||null;
     S.partidos=d.partidos?Object.values(d.partidos):PARTIDOS_GRUPOS.map(p=>({...p,ronda:'grupos',resultLocal:null,resultVisita:null}));
@@ -535,7 +537,7 @@ async function fbUpdate(path,val){setSS('sy');await update(ref(db,path),val);}
 async function fbRemove(path){setSS('sy');await remove(ref(db,path));}
 
 async function ensurePartidos(){
-  const snap=await get(ref(db,'quiniela/partidos'));
+  const snap = await get(ref(db,'quiniela/partidos'));
   if(!snap.val()){
     const obj={};
     PARTIDOS_GRUPOS.forEach(p=>{obj[p.id]={...p,ronda:'grupos',resultLocal:null,resultVisita:null};});
@@ -543,18 +545,18 @@ async function ensurePartidos(){
   }
 }
 
+// ════════ SIMULACIÓN ════════
 function calcGrupoTabla(grupo, getResult) {
   const equipos=GRUPOS[grupo].equipos;
   const partidos=PARTIDOS_GRUPOS.filter(p=>p.g===grupo);
   const stats={};
   equipos.forEach(e=>{stats[e]={pts:0,gf:0,gc:0,dg:0,fp:0,equipo:e,grupo};});
-
   partidos.forEach(p=>{
     const r=getResult(p.id);
     if(!r||r.local==null||r.visita==null) return;
     const rl=r.local,rv=r.visita;
-    stats[p.local].gf+=rl; stats[p.local].gc+=rv; stats[p.local].dg+=rl-rv;
-    stats[p.visita].gf+=rv; stats[p.visita].gc+=rl; stats[p.visita].dg+=rv-rl;
+    stats[p.local].gf+=rl;stats[p.local].gc+=rv;stats[p.local].dg+=rl-rv;
+    stats[p.visita].gf+=rv;stats[p.visita].gc+=rl;stats[p.visita].dg+=rv-rl;
     if(rl>rv){stats[p.local].pts+=3;}
     else if(rl===rv){stats[p.local].pts+=1;stats[p.visita].pts+=1;}
     else{stats[p.visita].pts+=3;}
@@ -564,30 +566,26 @@ function calcGrupoTabla(grupo, getResult) {
       stats[p.visita].fp+=(fp.amarillaV||0)*(-1)+(fp.dAmarillaV||0)*(-3)+(fp.rojaV||0)*(-4)+(fp.aRojaV||0)*(-5);
     }
   });
-
-  const tabla=Object.values(stats).sort((a,b)=>{
+  return Object.values(stats).sort((a,b)=>{
     if(b.pts!==a.pts) return b.pts-a.pts;
     if(b.dg!==a.dg) return b.dg-a.dg;
     if(b.gf!==a.gf) return b.gf-a.gf;
     if(b.fp!==a.fp) return b.fp-a.fp;
     return (FIFA_RANK[a.equipo]||99)-(FIFA_RANK[b.equipo]||99);
   });
-  return tabla;
 }
 
 function simularTorneo(getResult) {
   const tablas={};
   const grupos='ABCDEFGHIJKL'.split('');
-  grupos.forEach(g=>{ tablas[g]=calcGrupoTabla(g,getResult); });
-
-  const winners={}, runners={}, thirds={};
+  grupos.forEach(g=>{tablas[g]=calcGrupoTabla(g,getResult);});
+  const winners={},runners={},thirds={};
   grupos.forEach(g=>{
     winners[g]=tablas[g][0]?.equipo;
     runners[g]=tablas[g][1]?.equipo;
     thirds[g]=tablas[g][2];
   });
-
-  const allThirds=grupos.map(g=>({...thirds[g],grupo:g})).filter(t=>t.equipo);
+  const allThirds=grupos.map(g=>({...thirds[g],grupo:g})).filter(t=>t?.equipo);
   allThirds.sort((a,b)=>{
     if(b.pts!==a.pts) return b.pts-a.pts;
     if(b.dg!==a.dg) return b.dg-a.dg;
@@ -597,10 +595,8 @@ function simularTorneo(getResult) {
   });
   const best8thirds=allThirds.slice(0,8);
   const best8groups=best8thirds.map(t=>t.grupo).sort().join('');
-
   const thirdsMap={};
-  best8thirds.forEach(t=>{ thirdsMap[t.grupo]=t.equipo; });
-
+  best8thirds.forEach(t=>{thirdsMap[t.grupo]=t.equipo;});
   const filaFIFA=FIFA_R32_TABLE[best8groups];
   const thirdSlots={};
   if(filaFIFA){
@@ -611,11 +607,10 @@ function simularTorneo(getResult) {
       thirdSlots[slot]=thirdsMap[g]||null;
     });
   }
-
-  function getSlot(slot) {
+  function getSlot(slot){
     if(slot.type==='winner') return winners[slot.g]||null;
     if(slot.type==='runner') return runners[slot.g]||null;
-    if(slot.type==='third') {
+    if(slot.type==='third'){
       const partido=R32_FIXED.find(p=>p.slot2?.pool===slot.pool||p.slot1?.pool===slot.pool);
       if(!partido) return null;
       const vsKey=partido.slot1.type==='winner'?`1${partido.slot1.g}`:`1${partido.slot2.g}`;
@@ -623,8 +618,7 @@ function simularTorneo(getResult) {
     }
     return null;
   }
-
-  function simMatch(e1,e2,matchId) {
+  function simMatch(e1,e2,matchId){
     if(!e1||!e2) return e1||e2||null;
     const r=getResult('k_'+matchId);
     if(r&&r.local!=null&&r.visita!=null){
@@ -634,87 +628,79 @@ function simularTorneo(getResult) {
     }
     return null;
   }
-
   const r32Results={};
   R32_FIXED.forEach(m=>{
-    const e1=getSlot(m.slot1), e2=getSlot(m.slot2);
+    const e1=getSlot(m.slot1),e2=getSlot(m.slot2);
     r32Results[m.id]={e1,e2,winner:simMatch(e1,e2,m.id)};
   });
-
   const r16Results={};
   R16_BRACKET.forEach(m=>{
-    const e1=r32Results[m.s1]?.winner, e2=r32Results[m.s2]?.winner;
+    const e1=r32Results[m.s1]?.winner,e2=r32Results[m.s2]?.winner;
     r16Results[m.id]={e1,e2,winner:simMatch(e1,e2,m.id)};
   });
-
   const qfResults={};
   QF_BRACKET.forEach(m=>{
-    const e1=r16Results[m.s1]?.winner, e2=r16Results[m.s2]?.winner;
+    const e1=r16Results[m.s1]?.winner,e2=r16Results[m.s2]?.winner;
     qfResults[m.id]={e1,e2,winner:simMatch(e1,e2,m.id)};
   });
-
   const sfResults={};
   SF_BRACKET.forEach(m=>{
-    const e1=qfResults[m.s1]?.winner, e2=qfResults[m.s2]?.winner;
+    const e1=qfResults[m.s1]?.winner,e2=qfResults[m.s2]?.winner;
     sfResults[m.id]={e1,e2,winner:simMatch(e1,e2,m.id)};
   });
-
-  const e1=sfResults[FINAL.s1]?.winner, e2=sfResults[FINAL.s2]?.winner;
-  const finalResult={e1,e2,winner:simMatch(e1,e2,FINAL.id)};
-
-  return {tablas,winners,runners,thirds,best8thirds,thirdsMap,best8groups,
-    r32Results,r16Results,qfResults,sfResults,finalResult};
+  const e1f=sfResults[FINAL.s1]?.winner,e2f=sfResults[FINAL.s2]?.winner;
+  const finalResult={e1:e1f,e2:e2f,winner:simMatch(e1f,e2f,FINAL.id)};
+  return {tablas,winners,runners,thirds,best8thirds,thirdsMap,best8groups,r32Results,r16Results,qfResults,sfResults,finalResult};
 }
 
-function getResultReal(id) {
+function getResultReal(id){
   const p=S.partidos.find(p=>p.id===id);
   if(p&&p.resultLocal!=null) return {local:p.resultLocal,visita:p.resultVisita};
   return null;
 }
 
-function getResultProno(nombre,id) {
+function getResultProno(nombre,id){
   const pr=(S.pronosticos[id]||{})[nombre];
   if(pr&&pr.local!=null) return {local:pr.local,visita:pr.visita};
   return null;
 }
 
-function calcPts(nombre) {
+// ════════ PUNTOS ════════
+function calcPts(nombre){
   let marcPts=0,clsPts=0;
-
   S.partidos.forEach(p=>{
     if(p.resultLocal==null) return;
     const pr=(S.pronosticos[p.id]||{})[nombre];
     if(!pr) return;
     const pL=pr.local,pV=pr.visita,rL=p.resultLocal,rV=p.resultVisita;
     if(pL===rL&&pV===rV) marcPts+=2;
-    else {
-      const pr2=pL>pV?'L':pL<pV?'V':'E', rr=rL>rV?'L':rL<rV?'V':'E';
-      if(pr2===rr) marcPts+=1;
-    }
+    else{const p2=pL>pV?'L':pL<pV?'V':'E',rr=rL>rV?'L':rL<rV?'V':'E';if(p2===rr) marcPts+=1;}
   });
-
-  const misCls=S.clasificados[nombre]||{};
-  const equiposPicks=Object.values(misCls).flat().filter(Boolean);
-  if(equiposPicks.length>0){
+  // Puntos de clasificados desde pronósticos
+  const hasPronos=S.partidos.filter(p=>p.ronda==='grupos').some(p=>{const pr=(S.pronosticos[p.id]||{})[nombre];return pr&&pr.local!==undefined;});
+  if(hasPronos){
     const simReal=simularTorneo(getResultReal);
-    equiposPicks.forEach(equipo=>{
-      const gruposClasificados=[
-        ...Object.values(simReal.winners),
-        ...Object.values(simReal.runners),
-        ...simReal.best8thirds.map(t=>t.equipo)
-      ];
-      if(gruposClasificados.includes(equipo)) clsPts+=1;
-      if(Object.values(simReal.r32Results).find(m=>m.winner===equipo)) clsPts+=RONDA_PTS[32];
-      if(Object.values(simReal.r16Results).find(m=>m.winner===equipo)) clsPts+=RONDA_PTS[16];
-      if(Object.values(simReal.qfResults).find(m=>m.winner===equipo)) clsPts+=RONDA_PTS[8];
-      if(Object.values(simReal.sfResults).find(m=>m.winner===equipo)) clsPts+=RONDA_PTS[4];
+    const simProno=simularTorneo(id=>getResultProno(nombre,id));
+    // Equipos que pronosticó que clasifican de grupos
+    const pronoClasificados=[
+      ...Object.values(simProno.winners),
+      ...Object.values(simProno.runners),
+      ...simProno.best8thirds.map(t=>t.equipo)
+    ].filter(Boolean);
+    pronoClasificados.forEach(equipo=>{
+      const realClasificados=[...Object.values(simReal.winners),...Object.values(simReal.runners),...simReal.best8thirds.map(t=>t.equipo)];
+      if(realClasificados.includes(equipo)) clsPts+=1;
+      if(Object.values(simReal.r32Results).some(m=>m.winner===equipo)) clsPts+=RONDA_PTS[32];
+      if(Object.values(simReal.r16Results).some(m=>m.winner===equipo)) clsPts+=RONDA_PTS[16];
+      if(Object.values(simReal.qfResults).some(m=>m.winner===equipo)) clsPts+=RONDA_PTS[8];
+      if(Object.values(simReal.sfResults).some(m=>m.winner===equipo)) clsPts+=RONDA_PTS[4];
       if(simReal.finalResult.winner===equipo) clsPts+=RONDA_PTS[2];
     });
   }
-
   return {total:marcPts+clsPts,marcPts,clsPts};
 }
 
+// ════════ UTILS ════════
 const COLORS=['#E53935','#1E88E5','#43A047','#FB8C00','#8E24AA','#00ACC1','#F4511E','#6D4C41','#00897B','#C0CA33','#D81B60','#3949AB','#00838F','#558B2F','#EF6C00','#6A1B9A','#0277BD','#2E7D32','#4E342E','#37474F','#C62828','#283593'];
 const EMOJIS=['🦁','⭐','🦅','🐯','🦊','🐝','🦋','🌟','🔥','💫','🦄','🐉','🌈','⚡','🎯','🏆','🎪','🚀','🎸','🌺','🦚','🐺'];
 
@@ -726,8 +712,8 @@ function dlFmt(){if(!S.deadline) return null;return new Date(S.deadline).toLocal
 function renderDB(){
   const e=document.getElementById('db');
   if(!S.deadline){e.className='none';return;}
-  if(dlPassed()){e.className='closed';e.textContent='🔒 Deadline cerrado — Pronósticos y clasificados ya son visibles';}
-  else{e.className='open';e.textContent='⏰ Deadline: '+dlFmt()+' — Pronósticos y clasificados son privados hasta entonces';}
+  if(dlPassed()){e.className='closed';e.textContent='🔒 Deadline cerrado — Pronósticos ya son visibles';}
+  else{e.className='open';e.textContent='⏰ Deadline: '+dlFmt()+' — Pronósticos privados hasta entonces';}
 }
 
 let CT='reglas';
@@ -742,8 +728,8 @@ window.sw=function(tab,el){
 function renderCT(){
   if(CT==='jugadores') renderJugadores();
   if(CT==='partidos') renderPartidos();
-  if(CT==='pronosticos'){updateSels();renderPF();}
-  if(CT==='clasificados'){updateSels();renderCF();}
+  if(CT==='pronosticos'){updateSels();window.renderPF();}
+  if(CT==='clasificados'){updateSels();window.renderCF();}
   if(CT==='simulacion') renderSim();
   if(CT==='marcador') renderRanking();
 }
@@ -777,11 +763,17 @@ function renderDLPanel(){
   else txt.textContent='Sin deadline.';
 }
 
+// ════════ JUGADORES ════════
 function renderJugadores(){
-  renderAL('alp',()=>{document.getElementById('apui').style.display='block';});
-  if(!isAdmin) document.getElementById('apui').style.display='none';
+  // Admin panel para eliminar jugadores
+  const alp=document.getElementById('alp');
+  if(isAdmin){
+    alp.innerHTML=`<div class="alock" style="margin-bottom:12px"><h3>🔐 Panel Admin</h3><p style="font-size:.74rem;color:var(--g)">Solo tú puedes eliminar jugadores.</p></div>`;
+  } else {
+    alp.innerHTML='';
+  }
   const g=document.getElementById('pgrid');
-  if(!S.participants.length){g.innerHTML=`<div class="empty"><div class="ei">👥</div><p>Agrega jugadores</p></div>`;return;}
+  if(!S.participants.length){g.innerHTML=`<div class="empty"><div class="ei">👥</div><p>¡Sé el primero en unirte!</p></div>`;return;}
   g.innerHTML=S.participants.map(p=>{
     const {total,marcPts,clsPts}=calcPts(p.name);
     return `<div class="pc">${isAdmin?`<button class="db2" onclick="window.delP('${p.id}')">✕</button>`:''}<div class="av" style="background:${p.color}22;border:2px solid ${p.color}">${p.emoji}</div><div class="nm">${p.name}</div><div class="pts">${total}</div><div class="pl">⚽${marcPts} + 🏅${clsPts}</div></div>`;
@@ -789,16 +781,17 @@ function renderJugadores(){
 }
 window.addP=async function(){
   const inp=document.getElementById('npa');const name=inp.value.trim();if(!name) return;
-  if(S.participants.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('⚠️ Ya existe');return;}
+  if(S.participants.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('⚠️ Ese nombre ya está registrado');return;}
   const idx=S.participants.length;const id='p'+Date.now();
   await fbSet(`quiniela/participants/${id}`,{id,name,color:COLORS[idx%COLORS.length],emoji:EMOJIS[idx%EMOJIS.length]});
-  inp.value='';toast('✅ '+name+' agregado');
+  inp.value='';toast('✅ ¡Bienvenido '+name+'!');
 };
 window.delP=async function(id){
   if(!confirm('¿Eliminar?')) return;
   await fbRemove(`quiniela/participants/${id}`);
 };
 
+// ════════ PARTIDOS ════════
 function renderPartidos(){
   renderAL('alpart',()=>{renderDLPanel();});
   if(!isAdmin) document.getElementById('dap').style.display='none';
@@ -807,14 +800,12 @@ function renderPartidos(){
   const canSee=isAdmin||passed;
   const grupos='ABCDEFGHIJKL'.split('');
   let html='';
-
   grupos.forEach(g=>{
     const ps=S.partidos.filter(p=>p.g===g&&p.ronda==='grupos');
     if(!ps.length) return;
     html+=`<div class="gh"><div class="gl">GRUPO ${g}</div><div class="geq">${GRUPOS[g].equipos.join(' · ')}</div></div>`;
-    ps.forEach(p=>{ html+=partidoCard(p,canSee,isAdmin); });
+    ps.forEach(p=>{html+=partidoCard(p,canSee,isAdmin);});
   });
-
   list.innerHTML=html||`<div class="empty"><div class="ei">⚽</div><p>Cargando...</p></div>`;
 }
 
@@ -842,16 +833,14 @@ function partidoCard(p,canSee,admin){
       if(count>0) pronosHtml=`<div class="shield"><span>🔒</span><p>${count}/${S.participants.length} pronósticos guardados.</p></div>`;
     }
   }
-
   const adminR=admin?`
     <div class="rr"><label>📊 Resultado:</label><div class="si"><input type="number" id="rl-${p.id}" min="0" max="99" value="${hr?p.resultLocal:''}" placeholder="–"><span>–</span><input type="number" id="rv-${p.id}" min="0" max="99" value="${hr?p.resultVisita:''}" placeholder="–"></div><button class="btn bv bs" onclick="window.saveR('${p.id}')">💾</button>${hr?`<span style="color:var(--v);font-weight:800;font-size:.76rem">✅ ${p.resultLocal}–${p.resultVisita}</span>`:''}</div>
     <div class="fp-row"><label>🟨 Fair Play:</label><div class="fp-inputs">
-      ${fpInput(p.id,'amarillaL','🟨 Local')}${fpInput(p.id,'dAmarillaL','🟨🔴 L')}${fpInput(p.id,'rojaL','🔴 L')}${fpInput(p.id,'aRojaL','🟨🔴+ L')}
-      ${fpInput(p.id,'amarillaV','🟨 Visit')}${fpInput(p.id,'dAmarillaV','🟨🔴 V')}${fpInput(p.id,'rojaV','🔴 V')}${fpInput(p.id,'aRojaV','🟨🔴+ V')}
+      ${fpInput(p.id,'amarillaL','🟨L')}${fpInput(p.id,'dAmarillaL','🟨🔴L')}${fpInput(p.id,'rojaL','🔴L')}${fpInput(p.id,'aRojaL','🟨🔴+L')}
+      ${fpInput(p.id,'amarillaV','🟨V')}${fpInput(p.id,'dAmarillaV','🟨🔴V')}${fpInput(p.id,'rojaV','🔴V')}${fpInput(p.id,'aRojaV','🟨🔴+V')}
       <button class="btn bv bs" onclick="window.saveFP('${p.id}')">💾</button>
     </div></div>`
     :(hr?`<div style="margin-bottom:7px;font-size:.82rem;color:var(--v);font-weight:800">📊 ${p.resultLocal} – ${p.resultVisita}</div>`:`<div style="margin-bottom:7px;font-size:.75rem;color:var(--g)">⏳ Pendiente</div>`);
-
   return `<div class="card"><div class="pt"><span class="pn">${p.fecha||''}</span><div class="pteams"><span class="tn">🏠 ${p.local}</span><span class="vb">VS</span><span class="tn">${p.visita} ✈️</span></div></div>${adminR}${pronosHtml}</div>`;
 }
 
@@ -866,7 +855,6 @@ window.saveR=async function(id){
   await fbUpdate(`quiniela/partidos/${id}`,{resultLocal:parseInt(rl),resultVisita:parseInt(rv)});
   toast('✅ Resultado guardado');
 };
-
 window.saveFP=async function(id){
   const fields=['amarillaL','dAmarillaL','rojaL','aRojaL','amarillaV','dAmarillaV','rojaV','aRojaV'];
   const data={};
@@ -875,16 +863,18 @@ window.saveFP=async function(id){
   toast('✅ Fair Play guardado');
 };
 
+// ════════ SELECTORES ════════
 function updateSels(){
   ['ppsel','cpsel'].forEach(sid=>{
     const sel=document.getElementById(sid);if(!sel) return;
     const val=sel.value;
-    sel.innerHTML='<option value="">— Selecciona tu nombre —</option>'+S.participants.map(p=>`<option value="${p.name}" ${p.name===val?'selected':''}>${p.emoji} ${p.name}</option>`).join('');
+    sel.innerHTML='<option value="">— Selecciona —</option>'+S.participants.map(p=>`<option value="${p.name}" ${p.name===val?'selected':''}>${p.emoji} ${p.name}</option>`).join('');
     if(val) sel.value=val;
   });
 }
 
-window.renderPF = function(){
+// ════════ PRONÓSTICOS ════════
+window.renderPF=function(){
   const persona=document.getElementById('ppsel').value;
   const cont=document.getElementById('pfc');
   const passed=dlPassed();
@@ -892,9 +882,7 @@ window.renderPF = function(){
   if(passed){ib.innerHTML=`<strong style="color:var(--r)">🔒 Deadline cerrado.</strong>`;ib.style.background='rgba(229,57,53,.07)';ib.style.borderColor='rgba(229,57,53,.25)';}
   else if(S.deadline){ib.innerHTML=`<strong>⏰ Deadline: ${dlFmt()}</strong><br>Mete tus marcadores antes de esa hora.`;ib.style.background='';ib.style.borderColor='';}
   else{ib.innerHTML=`<strong>💡 Sin deadline.</strong> Puedes meter tus pronósticos cuando quieras.`;ib.style.background='';ib.style.borderColor='';}
-
   if(!persona){cont.innerHTML=`<div class="empty"><div class="ei">🎯</div><p>Selecciona tu nombre</p></div>`;return;}
-
   const grupos='ABCDEFGHIJKL'.split('');
   let rows='';
   grupos.forEach(g=>{
@@ -917,10 +905,9 @@ window.renderPF = function(){
       rows+=`<div class="prow"><div class="pteam2">${p.local} vs ${p.visita}<br><span style="font-size:.68rem;color:var(--g)">${p.fecha||''}</span></div><div class="pins"><input type="number" min="0" max="99" id="pi-${p.id}-l" value="${locked?prono.local:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}><span style="color:var(--g);font-weight:900">–</span><input type="number" min="0" max="99" id="pi-${p.id}-v" value="${locked?prono.visita:''}" placeholder="–" ${(locked||cantAdd)?'readonly style="opacity:.5;cursor:not-allowed"':''}></div>${ptsTag}</div>`;
     });
   });
-
   const allLocked=S.partidos.filter(p=>p.ronda==='grupos').every(p=>{const pr=(S.pronosticos[p.id]||{})[persona];return pr&&pr.local!==undefined;});
   cont.innerHTML=`<div class="pform"><h3>${persona}</h3><p style="font-size:.73rem;color:var(--g);margin-bottom:8px">Una vez guardado no se puede cambiar.</p>${rows}${!passed&&!allLocked?`<div style="margin-top:14px;text-align:right"><button class="btn bv" onclick="window.savePronos('${persona}')">💾 Guardar mis pronósticos</button></div>`:''}${allLocked?`<div style="margin-top:12px;text-align:center;font-size:.81rem;color:var(--v);font-weight:800">✅ Todos tus pronósticos guardados</div>`:''}${passed&&!allLocked?`<div style="margin-top:12px;text-align:center;font-size:.81rem;color:var(--r);font-weight:800">🔒 Deadline cerrado</div>`:''}</div>`;
-}
+};
 
 window.savePronos=async function(persona){
   if(dlPassed()){toast('⏰ Deadline cerrado');return;}
@@ -936,159 +923,154 @@ window.savePronos=async function(persona){
   toast('✅ '+count+' pronóstico'+(count>1?'s':'')+' guardado'+(count>1?'s':''));
 };
 
- window.renderCF = function(){
+// ════════ CLASIFICADOS — desde marcadores ════════
+window.renderCF=function(){
   const persona=document.getElementById('cpsel').value;
   const cont=document.getElementById('cfc');
-  const passed=dlPassed();
-  const ib=document.getElementById('cibox');
-  if(passed){ib.innerHTML=`<strong style="color:var(--r)">🔒 Deadline cerrado.</strong>`;ib.style.background='rgba(229,57,53,.07)';ib.style.borderColor='rgba(229,57,53,.25)';}
-  else{ib.innerHTML=`<strong>💡 Selecciona 2 equipos por grupo</strong><br>Elige quiénes crees que clasificarán. Ganas puntos por cada ronda que avancen.`;ib.style.background='';ib.style.borderColor='';}
+  if(!persona){cont.innerHTML=`<div class="empty"><div class="ei">🏅</div><p>Selecciona un jugador para ver su bracket</p></div>`;return;}
 
-  if(!persona){cont.innerHTML=`<div class="empty"><div class="ei">🏅</div><p>Selecciona tu nombre</p></div>`;return;}
+  const hasPronos=S.partidos.filter(p=>p.ronda==='grupos').some(p=>{
+    const pr=(S.pronosticos[p.id]||{})[persona];
+    return pr&&pr.local!==undefined;
+  });
 
-  const misCls=S.clasificados[persona]||{};
-  const yaGuardo=Object.keys(misCls).length>0;
+  if(!hasPronos){
+    cont.innerHTML=`<div class="empty"><div class="ei">🎯</div><p>${persona} aún no ha guardado sus pronósticos.<br><span style="font-size:.75rem">El bracket aparecerá automáticamente cuando los ingrese.</span></p></div>`;
+    return;
+  }
 
-  let html='<div class="bracket-sec"><h3>🏅 Tus Clasificados por Grupo</h3>';
+  const simProno=simularTorneo(id=>getResultProno(persona,id));
+  const simReal=simularTorneo(getResultReal);
 
-  if(yaGuardo){
-    html+='<p style="font-size:.78rem;color:var(--g);margin-bottom:10px">Tus selecciones están guardadas. Los puntos se calculan automáticamente.</p>';
-    const simReal=simularTorneo(getResultReal);
-    html+='<div class="bracket-grid">';
-    'ABCDEFGHIJKL'.split('').forEach(g=>{
-      const picks=misCls[g]||[];
-      html+=`<div class="bg"><h4>Grupo ${g}</h4>`;
-      picks.forEach(eq=>{
-        if(!eq) return;
-        let ptsEq=0;
-        const clasificados=[...Object.values(simReal.winners),...Object.values(simReal.runners),...simReal.best8thirds.map(t=>t.equipo)];
-        if(clasificados.includes(eq)) ptsEq+=1;
-        if(Object.values(simReal.r32Results).some(m=>m.winner===eq)) ptsEq+=RONDA_PTS[32];
-        if(Object.values(simReal.r16Results).some(m=>m.winner===eq)) ptsEq+=RONDA_PTS[16];
-        if(Object.values(simReal.qfResults).some(m=>m.winner===eq)) ptsEq+=RONDA_PTS[8];
-        if(Object.values(simReal.sfResults).some(m=>m.winner===eq)) ptsEq+=RONDA_PTS[4];
-        if(simReal.finalResult.winner===eq) ptsEq+=RONDA_PTS[2];
-        html+=`<div class="team-row"><span>🏳️ ${eq}</span><span class="pts-cl" style="color:${ptsEq>0?'var(--v)':'var(--g)'}">${ptsEq>0?'+'+ptsEq+' pts':''}</span></div>`;
-      });
-      if(!picks.length) html+=`<div style="font-size:.74rem;color:var(--g)">No seleccionados</div>`;
-      html+='</div>';
+  // Calcular puntos por equipo
+  function ptsEquipo(equipo){
+    let pts=0;
+    const realClasificados=[...Object.values(simReal.winners),...Object.values(simReal.runners),...simReal.best8thirds.map(t=>t.equipo)];
+    if(realClasificados.includes(equipo)) pts+=1;
+    if(Object.values(simReal.r32Results).some(m=>m.winner===equipo)) pts+=RONDA_PTS[32];
+    if(Object.values(simReal.r16Results).some(m=>m.winner===equipo)) pts+=RONDA_PTS[16];
+    if(Object.values(simReal.qfResults).some(m=>m.winner===equipo)) pts+=RONDA_PTS[8];
+    if(Object.values(simReal.sfResults).some(m=>m.winner===equipo)) pts+=RONDA_PTS[4];
+    if(simReal.finalResult.winner===equipo) pts+=RONDA_PTS[2];
+    return pts;
+  }
+
+  let html='';
+
+  // Grupos clasificados
+  html+=`<div class="bracket-sec"><h3>📊 Clasificados de Grupos (tu simulación)</h3>`;
+  html+=`<div class="bracket-grid">`;
+  'ABCDEFGHIJKL'.split('').forEach(g=>{
+    const tabla=simProno.tablas[g];
+    html+=`<div class="bg"><h4>Grupo ${g}</h4>`;
+    tabla.slice(0,3).forEach((t,i)=>{
+      if(!t?.equipo) return;
+      const isClasificado=i<2||(simProno.best8thirds.some(b=>b.equipo===t.equipo));
+      const pts=ptsEquipo(t.equipo);
+      const color=isClasificado?'var(--v)':'var(--g)';
+      html+=`<div class="team-row"><span style="color:${color}">${i===0?'🥇':i===1?'🥈':'🥉'} ${t.equipo}</span><span class="pts-cl" style="color:${pts>0?'var(--v)':'var(--g)'}">${pts>0?'+'+pts+'pts':''}</span></div>`;
     });
     html+='</div>';
+  });
+  html+='</div></div>';
 
-    const hasPronos=S.partidos.filter(p=>p.ronda==='grupos').some(p=>{const pr=(S.pronosticos[p.id]||{})[persona];return pr&&pr.local!==undefined;});
-    if(hasPronos){
-      const simProno=simularTorneo(id=>getResultProno(persona,id));
-      html+=`<div style="margin-top:16px"><p style="font-size:.8rem;color:var(--o);font-weight:700;margin-bottom:8px">🔮 Tu bracket simulado (basado en tus pronósticos):</p>`;
-      html+=`<div style="font-size:.78rem;color:#ccc;line-height:1.8;">`;
-      html+=`<div>🏆 Campeón predicho: <strong style="color:var(--v)">${simProno.finalResult.winner||'Pendiente'}</strong></div>`;
-      const sfs=[simProno.sfResults[SF_BRACKET[0].id]?.winner,simProno.sfResults[SF_BRACKET[1].id]?.winner].filter(Boolean);
-      if(sfs.length) html+=`<div>🥈 Finalistas predichos: <strong>${sfs.join(' vs ')}</strong></div>`;
-      html+='</div></div>';
-    }
-  } else if(!passed){
-    html+='<p style="font-size:.78rem;color:var(--g);margin-bottom:10px">Selecciona exactamente <strong>2 equipos</strong> que crees que pasarán de cada grupo.</p>';
-    html+='<div class="bracket-grid">';
-    'ABCDEFGHIJKL'.split('').forEach(g=>{
-      const eq=GRUPOS[g].equipos;
-      html+=`<div class="bg"><h4>Grupo ${g}</h4>`;
-      html+=`<select id="cls-${g}-0"><option value="">— 1er clasificado —</option>${eq.map(e=>`<option value="${e}">${e}</option>`).join('')}</select>`;
-      html+=`<select id="cls-${g}-1"><option value="">— 2do clasificado —</option>${eq.map(e=>`<option value="${e}">${e}</option>`).join('')}</select>`;
-      html+='</div>';
-    });
-    html+='</div>';
-    html+=`<div style="margin-top:14px;text-align:right"><button class="btn bv" onclick="window.saveCls('${persona}')">💾 Guardar mis clasificados</button></div>`;
-  } else {
-    html+=`<div class="empty"><div class="ei">⏰</div><p>El deadline cerró sin guardar clasificados.</p></div>`;
+  // Bracket eliminatorio
+  html+=`<div class="bracket-sec"><h3>🏟️ Tu Bracket Eliminatorio</h3>`;
+
+  function matchRow(e1,e2,winner,label){
+    if(!e1&&!e2) return '';
+    const pts1=e1?ptsEquipo(e1):0;
+    const pts2=e2?ptsEquipo(e2):0;
+    return `<div class="cls-match">
+      <span style="font-size:.68rem;color:var(--g);min-width:28px">${label||''}</span>
+      <span class="${winner===e1?'cls-winner':'cls-loser'}">${e1||'?'}${pts1>0?' <span style="font-size:.65rem;color:var(--v)">+'+pts1+'</span>':''}</span>
+      <span style="color:var(--g);font-size:.75rem">vs</span>
+      <span class="${winner===e2?'cls-winner':'cls-loser'}">${e2||'?'}${pts2>0?' <span style="font-size:.65rem;color:var(--v)">+'+pts2+'</span>':''}</span>
+      ${winner?`<span style="color:var(--v);font-size:.72rem">→ ${winner}</span>`:'<span style="color:var(--g);font-size:.72rem">⏳</span>'}
+    </div>`;
+  }
+
+  html+=`<div class="cls-round"><div class="cls-round-title">Dieciseisavos</div>`;
+  R32_FIXED.forEach(m=>{const r=simProno.r32Results[m.id];html+=matchRow(r?.e1,r?.e2,r?.winner,m.id.toUpperCase());});
+  html+='</div>';
+
+  html+=`<div class="cls-round"><div class="cls-round-title">Octavos</div>`;
+  R16_BRACKET.forEach(m=>{const r=simProno.r16Results[m.id];html+=matchRow(r?.e1,r?.e2,r?.winner,m.id.toUpperCase());});
+  html+='</div>';
+
+  html+=`<div class="cls-round"><div class="cls-round-title">Cuartos</div>`;
+  QF_BRACKET.forEach(m=>{const r=simProno.qfResults[m.id];html+=matchRow(r?.e1,r?.e2,r?.winner,m.id.toUpperCase());});
+  html+='</div>';
+
+  html+=`<div class="cls-round"><div class="cls-round-title">Semifinales</div>`;
+  SF_BRACKET.forEach(m=>{const r=simProno.sfResults[m.id];html+=matchRow(r?.e1,r?.e2,r?.winner,m.id.toUpperCase());});
+  html+='</div>';
+
+  const fr=simProno.finalResult;
+  html+=`<div class="cls-round"><div class="cls-round-title" style="color:var(--o)">🏆 Final</div>`;
+  html+=matchRow(fr?.e1,fr?.e2,fr?.winner,'FINAL');
+  html+='</div>';
+
+  if(fr?.winner){
+    const ptsChamp=ptsEquipo(fr.winner);
+    html+=`<div style="text-align:center;margin-top:14px;padding:14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:12px;">
+      <div style="font-size:2rem">🏆</div>
+      <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--o)">${fr.winner}</div>
+      <div style="font-size:.75rem;color:var(--g)">Tu campeón predicho${ptsChamp>0?' · <span style="color:var(--v)">+'+ptsChamp+' pts</span>':''}</div>
+    </div>`;
   }
 
   html+='</div>';
   cont.innerHTML=html;
-}
-
-window.saveCls=async function(persona){
-  if(dlPassed()){toast('⏰ Deadline cerrado');return;}
-  const grupos='ABCDEFGHIJKL'.split('');
-  const data={};let ok=true;
-  grupos.forEach(g=>{
-    const v0=document.getElementById(`cls-${g}-0`)?.value;
-    const v1=document.getElementById(`cls-${g}-1`)?.value;
-    if(!v0||!v1){ok=false;return;}
-    if(v0===v1){ok=false;toast(`⚠️ Grupo ${g}: elige 2 diferentes`);return;}
-    data[g]=[v0,v1];
-  });
-  if(!ok||Object.keys(data).length<12){toast('⚠️ Completa todos los grupos con 2 equipos diferentes');return;}
-  await fbSet(`quiniela/clasificados/${persona}`,data);
-  toast('✅ Clasificados guardados');
 };
 
+// ════════ SIMULACIÓN REAL ════════
 function renderSim(){
   const cont=document.getElementById('sim-content');
   const sim=simularTorneo(getResultReal);
   const grupos='ABCDEFGHIJKL'.split('');
   let html='';
-
   html+=`<div style="margin-bottom:8px"><div class="stitle" style="margin-bottom:10px">📊 Tablas de Posición</div>`;
   grupos.forEach(g=>{
     const tabla=sim.tablas[g];
     html+=`<div class="card"><div style="font-family:'Bebas Neue';font-size:1.2rem;color:var(--o);margin-bottom:8px;letter-spacing:1px">GRUPO ${g}</div>`;
-    html+=`<table class="sim-table"><tr><th>Equipo</th><th>PJ</th><th>PTS</th><th>DG</th><th>GF</th><th>FP</th><th>Pos</th></tr>`;
+    html+=`<table class="sim-table"><tr><th>Equipo</th><th>PJ</th><th>PTS</th><th>DG</th><th>GF</th><th>Pos</th></tr>`;
     tabla.forEach((t,i)=>{
       const pj=S.partidos.filter(p=>p.g===g&&p.ronda==='grupos'&&p.resultLocal!=null&&(p.local===t.equipo||p.visita===t.equipo)).length;
       const pos=i===0?`<span class="pos-badge pos1">1°</span>`:i===1?`<span class="pos-badge pos2">2°</span>`:i===2?`<span class="pos-badge pos3">3°</span>`:`<span class="pos-badge pos4">4°</span>`;
       const clsRow=i<2?'qualified':i===2?'third':'';
-      html+=`<tr class="${clsRow}"><td>${t.equipo}</td><td>${pj}</td><td><strong>${t.pts}</strong></td><td>${t.dg>0?'+':''}${t.dg}</td><td>${t.gf}</td><td>${t.fp}</td><td>${pos}</td></tr>`;
+      html+=`<tr class="${clsRow}"><td>${t.equipo}</td><td>${pj}</td><td><strong>${t.pts}</strong></td><td>${t.dg>0?'+':''}${t.dg}</td><td>${t.gf}</td><td>${pos}</td></tr>`;
     });
     html+='</table></div>';
   });
   html+='</div>';
-
   if(sim.best8thirds.length>0){
     html+=`<div class="sim-panel"><h3>🥉 Mejores 8 Terceros</h3><table class="sim-table"><tr><th>Equipo</th><th>Grupo</th><th>PTS</th><th>DG</th><th>GF</th></tr>`;
-    sim.best8thirds.forEach(t=>{
-      html+=`<tr><td><strong>${t.equipo}</strong></td><td>${t.grupo}</td><td>${t.pts}</td><td>${t.dg>0?'+':''}${t.dg}</td><td>${t.gf}</td></tr>`;
-    });
+    sim.best8thirds.forEach(t=>{html+=`<tr><td><strong>${t.equipo}</strong></td><td>${t.grupo}</td><td>${t.pts}</td><td>${t.dg>0?'+':''}${t.dg}</td><td>${t.gf}</td></tr>`;});
     html+='</table></div>';
   }
-
   if(sim.best8thirds.length===8){
-    html+=`<div class="sim-panel"><h3>🏟️ Dieciseisavos de Final</h3>`;
+    html+=`<div class="sim-panel"><h3>🏟️ Dieciseisavos</h3>`;
     R32_FIXED.forEach(m=>{
       const r=sim.r32Results[m.id];
-      html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;">`;
-      html+=`<span style="min-width:30px;color:var(--g);font-size:.7rem">${m.id.toUpperCase()}</span>`;
-      html+=`<span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>`;
-      if(r?.winner) html+=`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`;
-      html+='</div>';
+      html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="min-width:30px;color:var(--g);font-size:.7rem">${m.id.toUpperCase()}</span><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;
     });
     html+='</div>';
-
     if(Object.values(sim.r32Results).some(m=>m.winner)){
-      html+=`<div class="sim-panel"><h3>⚔️ Octavos de Final</h3>`;
-      R16_BRACKET.forEach(m=>{
-        const r=sim.r16Results[m.id];
-        html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;
-      });
+      html+=`<div class="sim-panel"><h3>⚔️ Octavos</h3>`;
+      R16_BRACKET.forEach(m=>{const r=sim.r16Results[m.id];html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;});
       html+='</div>';
     }
-
     if(Object.values(sim.r16Results).some(m=>m.winner)){
-      html+=`<div class="sim-panel"><h3>🔥 Cuartos de Final</h3>`;
-      QF_BRACKET.forEach(m=>{
-        const r=sim.qfResults[m.id];
-        html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;
-      });
+      html+=`<div class="sim-panel"><h3>🔥 Cuartos</h3>`;
+      QF_BRACKET.forEach(m=>{const r=sim.qfResults[m.id];html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;});
       html+='</div>';
     }
-
     if(Object.values(sim.qfResults).some(m=>m.winner)){
       html+=`<div class="sim-panel"><h3>🌟 Semifinales</h3>`;
-      SF_BRACKET.forEach(m=>{
-        const r=sim.sfResults[m.id];
-        html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;
-      });
+      SF_BRACKET.forEach(m=>{const r=sim.sfResults[m.id];html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem;"><span style="flex:1">${r?.e1||'?'} vs ${r?.e2||'?'}</span>${r?.winner?`<span style="color:var(--v);font-weight:800">→ ${r.winner}</span>`:''}</div>`;});
       html+='</div>';
     }
-
     if(sim.finalResult?.e1){
       html+=`<div class="sim-panel" style="border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.05)"><h3>🏆 FINAL</h3>`;
       html+=`<div style="text-align:center;font-size:1.1rem;font-weight:900;margin-bottom:8px">${sim.finalResult.e1} vs ${sim.finalResult.e2}</div>`;
@@ -1096,10 +1078,10 @@ function renderSim(){
       html+='</div>';
     }
   }
-
   cont.innerHTML=html||`<div class="empty"><div class="ei">⏳</div><p>Los datos aparecerán conforme se jueguen los partidos.</p></div>`;
 }
 
+// ════════ RANKING ════════
 function renderRanking(){
   const list=document.getElementById('rlist');const empty=document.getElementById('norank');
   if(!S.participants.length){list.innerHTML='';empty.style.display='block';return;}
@@ -1116,12 +1098,13 @@ function renderRanking(){
   }).join('');
 }
 
+// ════════ INIT ════════
 checkAdmin();
 if(isAdmin) document.getElementById('hsub').innerHTML='¡Que gane el mejor! <span class="abadge">🔐 Admin</span>';
 ensurePartidos().then(()=>{
   initListeners();
 }).catch(e=>{
-  console.error('Error ensurePartidos:', e);
+  console.error('Error ensurePartidos:',e);
   initListeners();
 });
 </script>
