@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -201,6 +202,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- REGLAS -->
+
 <div id="tab-reglas" class="sec active">
   <div class="rh">
     <h2>🎯 ¿Cómo se juega?</h2>
@@ -248,6 +250,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- JUGADORES -->
+
 <div id="tab-jugadores" class="sec">
   <div class="stitle">👥 Jugadores</div>
   <div class="dpanel" style="margin-bottom:16px">
@@ -263,6 +266,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- PARTIDOS -->
+
 <div id="tab-partidos" class="sec">
   <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;flex-wrap:wrap;">
     <div class="stitle" style="margin-bottom:0">⚽ Partidos</div>
@@ -284,6 +288,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- PRONÓSTICOS -->
+
 <div id="tab-pronosticos" class="sec">
   <div class="stitle">🎯 Mis Pronósticos</div>
   <div class="ibox" id="pibox"><strong>💡 Ingresa tus 72 marcadores</strong><br>El sistema calculará automáticamente quién clasifica según tus pronósticos.</div>
@@ -295,6 +300,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- CLASIFICADOS — bracket simulado desde marcadores -->
+
 <div id="tab-clasificados" class="sec">
   <div class="stitle">🏅 Clasificados</div>
   <div class="ibox"><strong>🔮 Bracket simulado desde tus marcadores</strong><br>Aquí ves quién clasifica y avanza según tus pronósticos. Los puntos se calculan automáticamente comparando contra los resultados reales.</div>
@@ -306,6 +312,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- SIMULACIÓN -->
+
 <div id="tab-simulacion" class="sec">
   <div class="stitle">🔢 Simulación del Torneo</div>
   <div class="ibox"><strong>📊 ¿Qué muestra esto?</strong><br>Esta sección muestra las tablas de posición de cada grupo y el bracket eliminatorio basados en los <strong>resultados reales</strong> ingresados por el admin.</div>
@@ -313,6 +320,7 @@ select.sel:focus{border-color:var(--v);}
 </div>
 
 <!-- MARCADOR -->
+
 <div id="tab-marcador" class="sec">
   <div class="stitle">📊 Marcador General</div>
   <div id="rlist"></div>
@@ -517,6 +525,7 @@ let isAdmin=false;
 function checkAdmin(){isAdmin=localStorage.getItem('qa')==='1';}
 function setAdmin(v){localStorage.setItem('qa',v?'1':'0');isAdmin=v;}
 
+let _firstLoad=true;
 function initListeners(){
   onValue(ref(db,'quiniela'),snap=>{
     const d=snap.val()||{};
@@ -527,9 +536,45 @@ function initListeners(){
     S.partidos=d.partidos?Object.values(d.partidos):PARTIDOS_GRUPOS.map(p=>({...p,ronda:'grupos',resultLocal:null,resultVisita:null}));
     setSS('ok');
     renderDB();
-    renderCT();
+    if(_firstLoad){
+      renderCT();
+      _firstLoad=false;
+    } else {
+      if(CT==='jugadores') renderJugadores();
+      if(CT==='pronosticos'){updateSels();window.renderPF();}
+      if(CT==='clasificados'){updateSels();window.renderCF();}
+      if(CT==='simulacion') renderSim();
+      if(CT==='marcador') renderRanking();
+      if(CT==='partidos') actualizarPronosticos();
+    }
     document.getElementById('lov').style.display='none';
   },()=>{setSS('er');document.getElementById('lov').style.display='none';});
+}
+
+function actualizarPronosticos(){
+  const passed=dlPassed();
+  const canSee=isAdmin||passed;
+  S.partidos.forEach(p=>{
+    const el=document.getElementById('pg-'+p.id);
+    if(!el) return;
+    if(!S.participants.length){el.innerHTML='';return;}
+    if(canSee){
+      const tags=S.participants.map(part=>{
+        const pr=(S.pronosticos[p.id]||{})[part.name];
+        if(!pr) return `<div class="pt2"><span class="pn2">${part.name}</span><span class="pp ppp">—</span></div>`;
+        const rL=p.resultLocal,rV=p.resultVisita;
+        let pts=null;
+        if(rL!=null){
+          if(pr.local===rL&&pr.visita===rV) pts=2;
+          else{const p2=pr.local>pr.visita?'L':pr.local<pr.visita?'V':'E',rr=rL>rV?'L':rL<rV?'V':'E';pts=p2===rr?1:0;}
+        }
+        const pc=pts===2?'pp2':pts===1?'pp1':pts===0?'pp0':'ppp';
+        const pl=pts===null?'⏳':pts===2?'⭐2':pts===1?'✅1':'❌0';
+        return `<div class="pt2"><span class="pn2">${part.name}</span><span class="ps">${pr.local}-${pr.visita}</span><span class="pp ${pc}">${pl}</span></div>`;
+      }).join('');
+      el.innerHTML=`<div style="font-size:.69rem;color:var(--g);font-weight:700;margin-bottom:4px">PRONÓSTICOS:</div><div class="pg">${tags}</div>`;
+    }
+  });
 }
 
 async function fbSet(path,val){setSS('sy');await set(ref(db,path),val);}
@@ -827,7 +872,7 @@ function partidoCard(p,canSee,admin){
         const pl=pts===null?'⏳':pts===2?'⭐2':pts===1?'✅1':'❌0';
         return `<div class="pt2"><span class="pn2">${part.name}</span><span class="ps">${pr.local}-${pr.visita}</span><span class="pp ${pc}">${pl}</span></div>`;
       }).join('');
-      pronosHtml=`<div><div style="font-size:.69rem;color:var(--g);font-weight:700;margin-bottom:4px">PRONÓSTICOS:</div><div class="pg">${tags}</div></div>`;
+      pronosHtml=`<div id="pg-${p.id}"><div style="font-size:.69rem;color:var(--g);font-weight:700;margin-bottom:4px">PRONÓSTICOS:</div><div class="pg">${tags}</div></div>`;
     } else {
       const count=S.participants.filter(part=>{const pr=(S.pronosticos[p.id]||{})[part.name];return pr&&pr.local!==undefined;}).length;
       if(count>0) pronosHtml=`<div class="shield"><span>🔒</span><p>${count}/${S.participants.length} pronósticos guardados.</p></div>`;
@@ -1108,5 +1153,6 @@ ensurePartidos().then(()=>{
   initListeners();
 });
 </script>
+
 </body>
 </html>
