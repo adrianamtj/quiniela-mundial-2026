@@ -729,23 +729,26 @@ function calcPts(nombre){
       }
     });
   });
-  // Puntos clasificados de grupos
-  const myTablas=calcTablas(id=>getPronoResult(nombre,id));
-  const realTablas=calcTablas(getRealResult);
-  const myThirds=S.clasificados[nombre]||[];
-  const my32=[
-    ...'ABCDEFGHIJKL'.split('').map(g=>myTablas[g][0]?.equipo),
-    ...'ABCDEFGHIJKL'.split('').map(g=>myTablas[g][1]?.equipo),
-    ...myThirds
-  ].filter(Boolean);
-  const allRealThirds=Object.keys(realTablas).map(g=>realTablas[g][2]).filter(Boolean)
-    .sort((a,b)=>b.pts-a.pts||b.dg-a.dg||b.gf-a.gf).slice(0,8).map(t=>t.equipo);
-  const real32=[
-    ...'ABCDEFGHIJKL'.split('').map(g=>realTablas[g][0]?.equipo),
-    ...'ABCDEFGHIJKL'.split('').map(g=>realTablas[g][1]?.equipo),
-    ...allRealThirds
-  ].filter(Boolean);
-  my32.forEach(eq=>{if(real32.includes(eq)) clsPts+=RONDA_PTS.grupos;});
+  // Puntos clasificados de grupos — solo si hay pronósticos guardados
+  const hasPronos=S.partidos.some(p=>(S.pronosticos[p.id]||{})[nombre]?.local!=null);
+  if(hasPronos){
+    const myTablas=calcTablas(id=>getPronoResult(nombre,id));
+    const realTablas=calcTablas(getRealResult);
+    const myThirds=Array.isArray(S.clasificados[nombre])?S.clasificados[nombre]:[];
+    const my32=[
+      ...'ABCDEFGHIJKL'.split('').map(g=>myTablas[g][0]?.equipo),
+      ...'ABCDEFGHIJKL'.split('').map(g=>myTablas[g][1]?.equipo),
+      ...myThirds
+    ].filter(Boolean);
+    const allRealThirds=Object.keys(realTablas).map(g=>realTablas[g][2]).filter(Boolean)
+      .sort((a,b)=>b.pts-a.pts||b.dg-a.dg||b.gf-a.gf).slice(0,8).map(t=>t.equipo);
+    const real32=[
+      ...'ABCDEFGHIJKL'.split('').map(g=>realTablas[g][0]?.equipo),
+      ...'ABCDEFGHIJKL'.split('').map(g=>realTablas[g][1]?.equipo),
+      ...allRealThirds
+    ].filter(Boolean);
+    my32.forEach(eq=>{if(real32.includes(eq)) clsPts+=RONDA_PTS.grupos;});
+  }
   // Puntos bracket
   const bracketState=buildBracketState(nombre);
   Object.values(bracketState).forEach(m=>{if(m.pts>0) clsPts+=m.pts;});
@@ -1030,7 +1033,7 @@ window.renderCLS=function(){
   else{ib.innerHTML=`<strong>🤖 1ros y 2dos automáticos.</strong> Elige los 8 mejores terceros.`;}
   if(!persona){cont.innerHTML=`<div class="empty"><div class="ei">🏅</div><p>Selecciona tu nombre</p></div>`;return;}
   const myTablas=calcTablas(id=>getPronoResult(persona,id));
-  const myThirds=S.clasificados[persona]||[];
+  const myThirds=Array.isArray(S.clasificados[persona])?S.clasificados[persona]:[];
   const locked=myThirds.length===8;
   const hasPronos=S.partidos.some(p=>(S.pronosticos[p.id]||{})[persona]?.local!=null);
   let html='';
@@ -1210,8 +1213,11 @@ window.saveElimResult=async function(ronda,matchId,local,visita){
 
 // ══════ BRACKET JUGADORES ══════
 window.renderBracket=function(){
-  const persona=document.getElementById('bpsel').value;
+  const bpsel=document.getElementById('bpsel');
+  if(!bpsel) return;
+  const persona=bpsel.value;
   const cont=document.getElementById('bracket-content');
+  if(!cont) return;
 
   // Verificar si hay slots cargados
   const hasSlots=Object.keys(S.slots).length>0;
