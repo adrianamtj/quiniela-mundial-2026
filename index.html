@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -188,6 +189,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- REGLAS -->
+
 <div id="tab-reglas" class="sec active">
   <div class="rh">
     <h2>🏆 ¡Bienvenido a la Quiniela Mundial 2026!</h2>
@@ -195,6 +197,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
   </div>
 
   <!-- MINI TUTORIAL PASO A PASO -->
+
   <div class="ebox" style="border-color:rgba(0,200,83,.3);background:rgba(0,200,83,.05)">
     <h3 style="color:var(--v)">📋 ¿Por dónde empiezo?</h3>
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
@@ -237,6 +240,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
   </div>
 
   <!-- FECHAS LÍMITE -->
+
   <div class="ebox" style="border-color:rgba(229,57,53,.3);background:rgba(229,57,53,.05)">
     <h3 style="color:var(--r)">⏰ Fechas límite importantes</h3>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px;font-size:.83rem;color:#ccc;line-height:1.6">
@@ -248,6 +252,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
   </div>
 
   <!-- CÓMO SE GANAN PUNTOS -->
+
   <div class="ebox">
     <h3>⭐ ¿Cómo se ganan puntos?</h3>
     <p style="font-size:.82rem;color:#ccc;margin-bottom:12px;line-height:1.6">Hay dos formas de ganar puntos: por <strong style="color:var(--o)">marcadores exactos</strong> y por <strong style="color:var(--v)">equipos que avanzan de ronda</strong>.</p>
@@ -282,6 +287,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- JUGADORES -->
+
 <div id="tab-jugadores" class="sec">
   <div class="stitle">👥 Jugadores</div>
   <div class="ibox">
@@ -290,9 +296,10 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
   </div>
   <div class="dpanel" style="margin-bottom:16px">
     <h3>✍️ Únete a la quiniela</h3>
-    <p style="font-size:.77rem;color:var(--g);margin-bottom:9px">Escribe tu nombre tal como quieres que aparezca y presiona <strong>Unirme</strong>.</p>
+    <p style="font-size:.77rem;color:var(--g);margin-bottom:9px">Escribe tu nombre y elige un PIN de 4 dígitos. <strong>No lo olvides</strong> — lo necesitarás para ver y meter tus pronósticos.</p>
     <div style="display:flex;gap:9px;flex-wrap:wrap;">
-      <input type="text" id="npa" placeholder="Tu nombre..." maxlength="20" onkeydown="if(event.key==='Enter')window.addP()" style="flex:1;min-width:170px;">
+      <input type="text" id="npa" placeholder="Tu nombre..." maxlength="20" style="flex:2;min-width:150px;">
+      <input type="password" id="nppin" placeholder="PIN (4 dígitos)" maxlength="4" pattern="[0-9]*" inputmode="numeric" onkeydown="if(event.key==='Enter')window.addP()" style="flex:1;min-width:110px;width:110px;">
       <button class="btn bv" onclick="window.addP()">Unirme 🙋</button>
     </div>
   </div>
@@ -301,6 +308,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- PARTIDOS -->
+
 <div id="tab-partidos" class="sec">
   <div class="stitle">⚽ Partidos</div>
   <div class="ibox">
@@ -324,6 +332,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- PRONÓSTICOS -->
+
 <div id="tab-pronosticos" class="sec">
   <div class="stitle">🎯 Mis Pronósticos</div>
   <div class="ibox">
@@ -340,6 +349,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- CLASIFICADOS -->
+
 <div id="tab-clasificados" class="sec">
   <div class="stitle">🏅 Mis Clasificados</div>
   <div class="ibox">
@@ -357,6 +367,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- BRACKET -->
+
 <div id="tab-bracket" class="sec">
   <div class="stitle">🏆 Cuadro Eliminatorio</div>
   <div class="ibox">
@@ -371,6 +382,7 @@ select.sel,select.spsel{padding:9px 12px;background:var(--a2);border:1px solid v
 </div>
 
 <!-- MARCADOR -->
+
 <div id="tab-marcador" class="sec">
   <div class="stitle">📊 Marcador General</div>
   <div class="ibox">
@@ -542,6 +554,21 @@ const FIFA_RANK={
 };
 
 const ADMIN_PASS='gol2026';
+// PINs verificados en esta sesión {nombre: true}
+const verifiedPins={};
+
+function isPinVerified(nombre){return isAdmin||verifiedPins[nombre]===true;}
+
+function renderPinPrompt(nombre,onSuccess){
+  return `<div class="alock" style="margin-top:8px">
+    <h3>🔐 Ingresa tu PIN</h3>
+    <p style="font-size:.76rem;color:var(--g);margin-bottom:9px">Necesitas tu PIN de 4 dígitos para ver tus pronósticos.</p>
+    <div class="lr">
+      <input type="password" id="pin-input-${nombre}" placeholder="PIN de 4 dígitos" maxlength="4" pattern="[0-9]*" inputmode="numeric" onkeydown="if(event.key==='Enter')window.verifyPin('${nombre}','${onSuccess}')">
+      <button class="btn bv bs" onclick="window.verifyPin('${nombre}','${onSuccess}')">Entrar</button>
+    </div>
+  </div>`;
+}
 // S.slots = {slotId: equipo} — admin confirma qué equipo va en cada slot del bracket
 // S.brackets = {nombre: {r32:{m1:equipo,...}, r16:{...}, ...}} — picks de jugadores
 // S.marcadoresElim = {ronda: {matchId: {nombre: {local,visita}}}} — pronósticos de marcadores elim
@@ -782,6 +809,14 @@ window.sw=function(tab,el){
   document.getElementById('tab-'+tab).classList.add('active');
   renderCT();
 };
+// Limpiar PIN verificado si cambian de nombre en el selector
+function onSelChange(selId, renderFn){
+  const sel=document.getElementById(selId);
+  if(!sel) return;
+  const nombre=sel.value;
+  if(nombre&&!isPinVerified(nombre)) renderFn();
+  else renderFn();
+}
 function renderCT(){
   if(CT==='jugadores') renderJugadores();
   if(CT==='partidos') renderPartidos();
@@ -829,12 +864,46 @@ function renderJugadores(){
     return `<div class="pc">${isAdmin?`<button class="db2" onclick="window.delP('${p.id}')">✕</button>`:''}<div class="av" style="background:${p.color}22;border:2px solid ${p.color}">${p.emoji}</div><div class="nm">${p.name}</div><div class="pts">${total}</div><div class="pl">⚽${marcPts} + 🏅${clsPts}</div></div>`;
   }).join('');
 }
+// Simple hash para PIN — no es criptografía fuerte, suficiente para quiniela familiar
+function hashPin(pin){let h=0;for(let i=0;i<pin.length;i++){h=((h<<5)-h)+pin.charCodeAt(i);h|=0;}return Math.abs(h).toString(36);}
+
+window.verifyPin=function(nombre,onSuccess){
+  const pin=document.getElementById('pin-input-'+nombre)?.value.trim()||'';
+  if(pin.length!==4){toast('⚠️ PIN de 4 dígitos');return;}
+  const participant=S.participants.find(p=>p.name===nombre);
+  if(!participant){toast('⚠️ Jugador no encontrado');return;}
+  if(!participant.pinHash){
+    // Jugador sin PIN (registrado antes de esta versión) — acceso libre
+    verifiedPins[nombre]=true;
+    toast('✅ Acceso concedido');
+    if(onSuccess==='PF') window.renderPF();
+    else if(onSuccess==='CLS') window.renderCLS();
+    else if(onSuccess==='BR') window.renderBracket();
+    return;
+  }
+  if(hashPin(pin)===participant.pinHash){
+    verifiedPins[nombre]=true;
+    toast('✅ PIN correcto');
+    if(onSuccess==='PF') window.renderPF();
+    else if(onSuccess==='CLS') window.renderCLS();
+    else if(onSuccess==='BR') window.renderBracket();
+  } else {
+    toast('❌ PIN incorrecto');
+  }
+};
+
 window.addP=async function(){
-  const inp=document.getElementById('npa');const name=inp.value.trim();if(!name) return;
+  const inp=document.getElementById('npa');
+  const pinInp=document.getElementById('nppin');
+  const name=inp.value.trim();
+  const pin=pinInp?.value.trim()||'';
+  if(!name){toast('⚠️ Escribe tu nombre');return;}
+  if(pin.length!==4||!/^[0-9]{4}$/.test(pin)){toast('⚠️ El PIN debe ser exactamente 4 dígitos');return;}
   if(S.participants.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('⚠️ Ese nombre ya existe');return;}
   const idx=S.participants.length;const id='p'+Date.now();
-  await fbSet(`quiniela/participants/${id}`,{id,name,color:COLORS[idx%COLORS.length],emoji:EMOJIS[idx%EMOJIS.length]});
-  inp.value='';toast('✅ ¡Bienvenido '+name+'!');
+  await fbSet(`quiniela/participants/${id}`,{id,name,color:COLORS[idx%COLORS.length],emoji:EMOJIS[idx%EMOJIS.length],pinHash:hashPin(pin)});
+  inp.value='';pinInp.value='';
+  toast('✅ ¡Bienvenido '+name+'! Recuerda tu PIN.');
 };
 window.delP=async function(id){if(!confirm('¿Eliminar?')) return;await fbRemove(`quiniela/participants/${id}`);};
 
@@ -932,6 +1001,7 @@ window.renderPF=function(){
   else if(S.deadline) ihtml=`<div class="ibox"><strong>⏰ Fecha límite: ${dlFmt(S.deadline)}</strong><br>Mete tus marcadores antes de esa hora.</div>`;
   else ihtml=`<div class="ibox"><strong>💡 Sin fecha límite.</strong> Puedes meter tus pronósticos cuando quieras.</div>`;
   if(!persona){cont.innerHTML=ihtml+`<div class="empty"><div class="ei">🎯</div><p>Selecciona tu nombre</p></div>`;return;}
+  if(!isPinVerified(persona)){cont.innerHTML=ihtml+renderPinPrompt(persona,'PF');return;}
   let rows='';
   'ABCDEFGHIJKL'.split('').forEach(g=>{
     const ps=S.partidos.filter(p=>p.g===g);if(!ps.length) return;
@@ -1032,6 +1102,7 @@ window.renderCLS=function(){
   if(passed){ib.innerHTML=`<strong style="color:var(--r)">🔒 Fecha límite cerrada.</strong>`;ib.style.background='rgba(229,57,53,.07)';ib.style.borderColor='rgba(229,57,53,.25)';}
   else{ib.innerHTML=`<strong>🤖 1ros y 2dos automáticos.</strong> Elige los 8 mejores terceros.`;}
   if(!persona){cont.innerHTML=`<div class="empty"><div class="ei">🏅</div><p>Selecciona tu nombre</p></div>`;return;}
+  if(!isPinVerified(persona)){cont.innerHTML=renderPinPrompt(persona,'CLS');return;}
   const myTablas=calcTablas(id=>getPronoResult(persona,id));
   const myThirds=Array.isArray(S.clasificados[persona])?S.clasificados[persona]:[];
   const locked=myThirds.length===8;
@@ -1219,6 +1290,8 @@ window.renderBracket=function(){
   const cont=document.getElementById('bracket-content');
   if(!cont) return;
 
+  if(persona&&!isPinVerified(persona)){cont.innerHTML=renderPinPrompt(persona,'BR');return;}
+
   // Verificar si hay slots cargados
   const hasSlots=Object.keys(S.slots).length>0;
   const dlBracket=S.deadlines.bracket;
@@ -1346,5 +1419,6 @@ checkAdmin();
 if(isAdmin) document.getElementById('hsub').innerHTML='¡Que gane el mejor! <span class="abadge">🔐 Admin</span>';
 ensurePartidos().then(()=>{initListeners();}).catch(e=>{console.error(e);initListeners();});
 </script>
+
 </body>
 </html>
