@@ -1113,9 +1113,9 @@ function renderBracketAdmin(){
 
   // Mostrar todos los slots agrupados
   const slotGroups=[
-    {label:'1ros de Grupo','ABCDEFGHIJKL'.split('').map(g=>`1${g}`)},
-    {label:'2dos de Grupo','ABCDEFGHIJKL'.split('').map(g=>`2${g}`)},
-    {label:'Mejores Terceros (T1-T8)',[...Array(8)].map((_,i)=>`3T${i+1}`)},
+    {label:'1ros de Grupo',slots:'ABCDEFGHIJKL'.split('').map(g=>`1${g}`)},
+    {label:'2dos de Grupo',slots:'ABCDEFGHIJKL'.split('').map(g=>`2${g}`)},
+    {label:'Mejores Terceros (T1-T8)',slots:[...Array(8)].map((_,i)=>`3T${i+1}`)},
   ];
   // Extraer slots únicos de R32
   const r32Slots=new Set();
