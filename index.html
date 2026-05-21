@@ -1052,7 +1052,9 @@ window.renderCLS=function(){
   if(locked){
     html+=`<p style="font-size:.8rem;color:var(--v);font-weight:800;margin-bottom:8px">✅ Terceros guardados</p>`;
     html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px">${myThirds.map(eq=>`<div style="background:rgba(0,172,193,.12);border:1px solid rgba(0,172,193,.3);border-radius:8px;padding:7px 10px;font-size:.8rem;font-weight:700;color:#00ACC1">🥉 ${eq}</div>`).join('')}</div>`;
-  } else if(!passed){
+  } else if(!passed&&!hasPronos){
+    html+=`<div class="empty" style="padding:20px"><div class="ei">🎯</div><p>Primero mete tus pronósticos de grupos.<br><span style="font-size:.75rem">Los terceros aparecerán automáticamente una vez que los guardes.</span></p></div>`;
+  } else if(!passed&&hasPronos){
     const allThirds='ABCDEFGHIJKL'.split('').map(g=>({g,equipo:myTablas[g][2]?.equipo})).filter(t=>t.equipo);
     html+=`<div class="thirds-grid">`;
     allThirds.forEach(t=>{
